@@ -5,85 +5,128 @@
 <title>Order - Satyabati Hindu Hotel</title>
 
 <style>
-body {font-family:Arial;margin:0;background:#fff;}
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #f2f2f2;
+}
 
+/* Header */
 .header {
-  background:#5A5A5A;color:#fff;text-align:center;
-  padding:15px;font-size:20px;font-weight:bold;
+  background: #5A5A5A;
+  color: white;
+  text-align: center;
+  padding: 16px;
+  font-size: 20px;
+  font-weight: bold;
 }
 
-.container {padding:15px;padding-bottom:100px;}
+/* Container */
+.container { padding: 15px; }
 
+/* Inputs */
 input {
-  width:100%;padding:10px;margin:6px 0;
-  border-radius:8px;border:1px solid #ccc;
+  width: 100%;
+  padding: 12px;
+  margin: 6px 0;
+  border-radius: 10px;
+  border: 1px solid #ccc;
 }
 
+/* Card */
 .section {
-  background:#fff;padding:12px;margin-top:10px;
-  border-radius:12px;border:1px solid #eee;
+  background: white;
+  padding: 14px;
+  margin-top: 12px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-.qty-box {display:flex;justify-content:space-between;align-items:center;margin-top:10px;}
+/* Quantity */
+.qty-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
 
 .qty-btn {
-  background:#5A5A5A;color:white;border:none;
-  padding:6px 12px;border-radius:6px;
+  background: #5A5A5A;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
 }
 
-/* Add More */
+/* Add more button */
 .add-more {
-  text-align:center;padding:12px;background:#f2f2f2;
-  border-radius:10px;cursor:pointer;font-weight:bold;
+  text-align: center;
+  padding: 12px;
+  background: #eee;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
 }
-
-/* Category buttons */
-.cat-btns {display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
-.cat-btns button {
-  padding:6px 10px;border:none;border-radius:20px;background:#eee;
-}
-.cat-btns .active {background:#5A5A5A;color:#fff;}
 
 /* Menu item */
 .menu-item {
-  display:flex;justify-content:space-between;align-items:center;
-  padding:8px 0;border-bottom:1px solid #eee;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:8px 0;
+  border-bottom:1px solid #eee;
 }
 
-.btns {display:flex;gap:5px;}
-
-.add-btn {
-  background:#FFC107;border:none;padding:6px 10px;border-radius:6px;
+.menu-item button {
+  background:#FFC107;
+  border:none;
+  padding:6px 10px;
+  border-radius:6px;
+  font-weight:bold;
 }
 
-.remove-btn {
-  background:#a67c52;color:white;border:none;
-  padding:6px 10px;border-radius:6px;
-}
-
-/* Bottom */
+/* Bottom bar */
 .total-bar {
-  position:fixed;bottom:0;width:100%;background:white;
-  border-top:1px solid #ccc;padding:12px;
-  display:flex;justify-content:space-between;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: white;
+  border-top: 1px solid #ccc;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.total {font-size:22px;font-weight:bold;}
+.total {
+  font-size: 22px;
+  font-weight: bold;
+}
 
-.main-btn {
-  background:#FFC107;border:none;padding:10px 14px;
-  font-weight:bold;border-radius:8px;
+.btn {
+  background: #FFC107;
+  border: none;
+  padding: 12px 16px;
+  font-weight: bold;
+  border-radius: 10px;
 }
 
 /* Popup */
 #popup {
-  display:none;position:fixed;top:0;left:0;
-  width:100%;height:100%;background:rgba(0,0,0,0.5);
+  display:none;
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.5);
 }
 
 .popup-box {
-  background:white;margin:20% auto;padding:15px;
-  width:90%;max-width:350px;border-radius:10px;
+  background:white;
+  margin:20% auto;
+  padding:15px;
+  width:90%;
+  max-width:350px;
+  border-radius:12px;
 }
 </style>
 </head>
@@ -94,6 +137,7 @@ input {
 
 <div class="container">
 
+<!-- Customer -->
 <div class="section">
 <input id="name" placeholder="Enter your Full Name">
 <input id="phone" type="tel" placeholder="Enter Phone Number">
@@ -101,6 +145,7 @@ input {
 <input id="ps" placeholder="Enter Police Station">
 </div>
 
+<!-- Main Item -->
 <div class="section">
 <b id="itemName"></b>
 
@@ -150,24 +195,23 @@ input {
 <!-- More Items -->
 <div class="section">
 <div class="add-more" onclick="toggleMenu()">+ Add More Items</div>
-
-<div class="cat-btns" id="catBtns"></div>
-
 <div id="menuBox" style="display:none;margin-top:10px;"></div>
 </div>
 
 </div>
 
+<!-- Bottom -->
 <div class="total-bar">
 <div class="total">₹ <span id="total">0</span></div>
-<button class="main-btn" onclick="confirmOrder()">Proceed</button>
+<button class="btn" onclick="confirmOrder()">Proceed</button>
 </div>
 
 <!-- Popup -->
 <div id="popup">
 <div class="popup-box">
 <h3>Confirm Order</h3>
-<div id="summary"></div><br>
+<div id="summary"></div>
+<br>
 <button onclick="closePopup()">Edit</button>
 <button onclick="sendWhatsApp()" style="background:#FFC107;border:none;">Confirm</button>
 </div>
@@ -182,30 +226,25 @@ document.getElementById("itemName").innerText = item;
 let cart=[{name:item,price:price,qty:1}];
 let half=0,full=0,plate=0;
 
-let allItems=[];
-let currentCat="All";
-
-/* Qty */
 function changeQty(v){
 cart[0].qty=Math.max(1,cart[0].qty+v);
 document.getElementById("qty").innerText=cart[0].qty;
 update();
 }
 
-/* Total */
 function update(){
 let total=0;
 cart.forEach(i=>total+=i.price*i.qty);
 total+=half*6+full*11+plate*2;
 
-document.getElementById("total").innerText=total;
 document.getElementById("halfQty").innerText=half;
 document.getElementById("fullQty").innerText=full;
 document.getElementById("plateQty").innerText=plate;
+document.getElementById("total").innerText=total;
 }
 update();
 
-/* LOAD SHEET */
+/* LOAD MORE ITEMS (YOUR SHEET FIXED) */
 function toggleMenu(){
 let box=document.getElementById("menuBox");
 
@@ -216,89 +255,39 @@ fetch("https://docs.google.com/spreadsheets/d/1ha14_n8IdltiVwrMFYSC5e8l5fnMkJUQk
 .then(r=>r.text())
 .then(d=>{
 const j=JSON.parse(d.substr(47).slice(0,-2));
-
-allItems=[];
+let html="";
 
 j.table.rows.forEach(r=>{
-let cat=r.c[2]?.v;
-let name=r.c[4]?.v;
-let price=r.c[5]?.v;
-let show=r.c[11]?.v;
+let name=r.c[4]?.v;   // E
+let price=r.c[5]?.v;  // F
+let show=r.c[11]?.v;  // L
 
-if(name && (show==="Yes"||show==="yes")){
-allItems.push({cat,name,price});
+if(name && (show==="Yes"||show==="yes"||show===true)){
+html+=`
+<div class="menu-item">
+<div>${name} (₹${price})</div>
+<button onclick="addItem('${name}',${price})">Add</button>
+</div>`;
 }
 });
 
-createCategories();
-displayItems();
+box.innerHTML=html;
 });
 }else{
 box.style.display="none";
 }
 }
 
-/* CATEGORY BUTTONS */
-function createCategories(){
-let cats=["All",...new Set(allItems.map(i=>i.cat))];
-
-let html="";
-cats.forEach(c=>{
-html+=`<button onclick="filterCat('${c}')" class="${c===currentCat?'active':''}">${c}</button>`;
-});
-
-document.getElementById("catBtns").innerHTML=html;
-}
-
-function filterCat(c){
-currentCat=c;
-createCategories();
-displayItems();
-}
-
-/* DISPLAY */
-function displayItems(){
-let html="";
-
-let list=currentCat==="All"?allItems:allItems.filter(i=>i.cat===currentCat);
-
-list.forEach(i=>{
-let exists=cart.find(x=>x.name===i.name);
-
-html+=`
-<div class="menu-item">
-<div>${i.name} ₹${i.price}</div>
-<div class="btns">
-<button class="add-btn" onclick="addItem('${i.name}',${i.price})">
-${exists?'Added':'Add'}
-</button>
-<button class="remove-btn" onclick="removeItem('${i.name}')">
-${exists?'Remove':'Removed'}
-</button>
-</div>
-</div>`;
-});
-
-document.getElementById("menuBox").innerHTML=html;
-}
-
-/* ADD */
 function addItem(name,price){
 let f=cart.find(i=>i.name===name);
-if(!f){cart.push({name,price,qty:1});}
-displayItems();
-update();
-}
-
-/* REMOVE */
-function removeItem(name){
-cart=cart.filter(i=>i.name!==name || i.name===item);
-displayItems();
+if(f){f.qty++}else{cart.push({name,price,qty:1})}
+alert(name+" added");
 update();
 }
 
 /* POPUP */
 function confirmOrder(){
+
 let name=document.getElementById("name").value.trim();
 let phone=document.getElementById("phone").value.trim();
 let village=document.getElementById("village").value.trim();
@@ -326,8 +315,8 @@ document.getElementById("popup").style.display="block";
 
 function closePopup(){document.getElementById("popup").style.display="none";}
 
-/* WHATSAPP */
 function sendWhatsApp(){
+
 let d=window.data;
 let items="";
 
@@ -337,7 +326,8 @@ if(half>0) items+=`- Half Rice x${half}\n`;
 if(full>0) items+=`- Full Rice x${full}\n`;
 if(plate>0) items+=`- Plate x${plate}\n`;
 
-let msg=`📍 Satyabati Hindu Hotel
+let msg=
+`📍 Satyabati Hindu Hotel
 
 👤 ${d.name}
 📞 ${d.phone}
@@ -347,7 +337,10 @@ let msg=`📍 Satyabati Hindu Hotel
 🛒 Order:
 ${items}
 
-💰 Total ₹${d.total}`;
+💰 Total ₹${d.total}
+
+👉 Please Pay ₹${d.total}
+Send payment screenshot`;
 
 window.open(`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`);
 closePopup();
