@@ -8,7 +8,7 @@
 body {
   font-family: Arial;
   margin: 0;
-  background: #f2f2f2;
+  background: #ffffff;
 }
 
 /* Header */
@@ -21,10 +21,11 @@ body {
   font-weight: bold;
 }
 
-/* Container */
-.container { padding: 15px; }
+.container {
+  padding: 15px;
+  padding-bottom: 100px;
+}
 
-/* Inputs */
 input {
   width: 100%;
   padding: 12px;
@@ -33,16 +34,14 @@ input {
   border: 1px solid #ccc;
 }
 
-/* Card */
 .section {
   background: white;
   padding: 14px;
   margin-top: 12px;
   border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: 1px solid #eee;
 }
 
-/* Quantity */
 .qty-box {
   display: flex;
   justify-content: space-between;
@@ -58,14 +57,34 @@ input {
   border-radius: 6px;
 }
 
-/* Add more button */
+/* Add More */
 .add-more {
   text-align: center;
   padding: 12px;
-  background: #eee;
+  background: #f2f2f2;
   border-radius: 10px;
   cursor: pointer;
   font-weight: bold;
+}
+
+/* Category buttons */
+.cat-btns, .subcat-btns {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.cat-btns button, .subcat-btns button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 20px;
+  background: #eee;
+}
+
+.active {
+  background: #5A5A5A !important;
+  color: #fff;
 }
 
 /* Menu item */
@@ -77,22 +96,36 @@ input {
   border-bottom:1px solid #eee;
 }
 
-.menu-item button {
+.btns {
+  display:flex;
+  gap:5px;
+}
+
+.add-btn {
   background:#FFC107;
   border:none;
   padding:6px 10px;
   border-radius:6px;
-  font-weight:bold;
+  min-width:60px;
 }
 
-/* Bottom bar */
+.remove-btn {
+  background:#5A5A5A;
+  color:white;
+  border:none;
+  padding:6px 10px;
+  border-radius:6px;
+  min-width:60px;
+}
+
+/* Bottom */
 .total-bar {
   position: fixed;
   bottom: 0;
   width: 100%;
   background: white;
   border-top: 1px solid #ccc;
-  padding: 12px;
+  padding: 12px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -106,9 +139,10 @@ input {
 .btn {
   background: #FFC107;
   border: none;
-  padding: 12px 16px;
+  padding: 12px 20px;
   font-weight: bold;
   border-radius: 10px;
+  margin-right: 10px; /* shift left */
 }
 
 /* Popup */
@@ -137,7 +171,6 @@ input {
 
 <div class="container">
 
-<!-- Customer -->
 <div class="section">
 <input id="name" placeholder="Enter your Full Name">
 <input id="phone" type="tel" placeholder="Enter Phone Number">
@@ -145,7 +178,6 @@ input {
 <input id="ps" placeholder="Enter Police Station">
 </div>
 
-<!-- Main Item -->
 <div class="section">
 <b id="itemName"></b>
 
@@ -195,6 +227,10 @@ input {
 <!-- More Items -->
 <div class="section">
 <div class="add-more" onclick="toggleMenu()">+ Add More Items</div>
+
+<div class="cat-btns" id="catBtns"></div>
+<div class="subcat-btns" id="subBtns"></div>
+
 <div id="menuBox" style="display:none;margin-top:10px;"></div>
 </div>
 
@@ -210,8 +246,7 @@ input {
 <div id="popup">
 <div class="popup-box">
 <h3>Confirm Order</h3>
-<div id="summary"></div>
-<br>
+<div id="summary"></div><br>
 <button onclick="closePopup()">Edit</button>
 <button onclick="sendWhatsApp()" style="background:#FFC107;border:none;">Confirm</button>
 </div>
@@ -226,6 +261,10 @@ document.getElementById("itemName").innerText = item;
 let cart=[{name:item,price:price,qty:1}];
 let half=0,full=0,plate=0;
 
+let allItems=[];
+let currentCat="All";
+let currentSub="All";
+
 function changeQty(v){
 cart[0].qty=Math.max(1,cart[0].qty+v);
 document.getElementById("qty").innerText=cart[0].qty;
@@ -236,15 +275,11 @@ function update(){
 let total=0;
 cart.forEach(i=>total+=i.price*i.qty);
 total+=half*6+full*11+plate*2;
-
-document.getElementById("halfQty").innerText=half;
-document.getElementById("fullQty").innerText=full;
-document.getElementById("plateQty").innerText=plate;
 document.getElementById("total").innerText=total;
 }
 update();
 
-/* LOAD MORE ITEMS (YOUR SHEET FIXED) */
+/* LOAD ONLY 2ND SHEET */
 function toggleMenu(){
 let box=document.getElementById("menuBox");
 
@@ -255,95 +290,83 @@ fetch("https://docs.google.com/spreadsheets/d/1ha14_n8IdltiVwrMFYSC5e8l5fnMkJUQk
 .then(r=>r.text())
 .then(d=>{
 const j=JSON.parse(d.substr(47).slice(0,-2));
-let html="";
+
+allItems=[];
 
 j.table.rows.forEach(r=>{
-let name=r.c[4]?.v;   // E
-let price=r.c[5]?.v;  // F
-let show=r.c[11]?.v;  // L
+let cat=r.c[2]?.v;
+let sub=r.c[3]?.v;
+let name=r.c[4]?.v;
+let price=r.c[5]?.v;
+let show=r.c[11]?.v;
 
-if(name && (show==="Yes"||show==="yes"||show===true)){
-html+=`
-<div class="menu-item">
-<div>${name} (₹${price})</div>
-<button onclick="addItem('${name}',${price})">Add</button>
-</div>`;
+if(name && (show==="Yes"||show==="yes")){
+allItems.push({cat,sub,name,price});
 }
 });
 
-box.innerHTML=html;
+createCats();
+displayItems();
 });
 }else{
 box.style.display="none";
 }
 }
 
-function addItem(name,price){
-let f=cart.find(i=>i.name===name);
-if(f){f.qty++}else{cart.push({name,price,qty:1})}
-alert(name+" added");
-update();
+/* CATEGORY */
+function createCats(){
+let cats=["All",...new Set(allItems.map(i=>i.cat))];
+
+let html="";
+cats.forEach(c=>{
+html+=`<button onclick="filterCat('${c}')" class="${c===currentCat?'active':''}">${c}</button>`;
+});
+document.getElementById("catBtns").innerHTML=html;
+
+let subs=["All",...new Set(allItems.filter(i=>currentCat==="All"||i.cat===currentCat).map(i=>i.sub))];
+
+let html2="";
+subs.forEach(s=>{
+html2+=`<button onclick="filterSub('${s}')" class="${s===currentSub?'active':''}">${s}</button>`;
+});
+document.getElementById("subBtns").innerHTML=html2;
 }
 
-/* POPUP */
-function confirmOrder(){
-
-let name=document.getElementById("name").value.trim();
-let phone=document.getElementById("phone").value.trim();
-let village=document.getElementById("village").value.trim();
-let ps=document.getElementById("ps").value.trim();
-
-if(!name||!phone||!village||!ps){alert("Fill all details");return;}
-if(phone.length!=10){alert("Invalid phone");return;}
-
-let total=document.getElementById("total").innerText;
-
-window.data={name,phone,village,ps,total};
-
-let items="";
-cart.forEach(i=>{if(i.qty>0){items+=`${i.name} (${i.qty})<br>`;}});
-
-if(half>0) items+=`Half Rice (${half})<br>`;
-if(full>0) items+=`Full Rice (${full})<br>`;
-if(plate>0) items+=`Plate (${plate})<br>`;
-
-document.getElementById("summary").innerHTML=
-`<b>${name}</b><br><br>${items}<br><b>Total ₹${total}</b>`;
-
-document.getElementById("popup").style.display="block";
+function filterCat(c){
+currentCat=c;
+currentSub="All";
+createCats();
+displayItems();
 }
 
-function closePopup(){document.getElementById("popup").style.display="none";}
+function filterSub(s){
+currentSub=s;
+createCats();
+displayItems();
+}
 
-function sendWhatsApp(){
+/* DISPLAY */
+function displayItems(){
+let list=allItems.filter(i=>
+(currentCat==="All"||i.cat===currentCat) &&
+(currentSub==="All"||i.sub===currentSub)
+);
 
-let d=window.data;
-let items="";
+let html="";
+list.forEach(i=>{
+let exists=cart.find(x=>x.name===i.name);
 
-cart.forEach(i=>{if(i.qty>0){items+=`- ${i.name} x${i.qty}\n`;}});
+html+=`
+<div class="menu-item">
+<div>${i.name} ₹${i.price}</div>
+<div class="btns">
+<button class="add-btn">${exists?'Added':'Add'}</button>
+<button class="remove-btn">${exists?'Remove':'Removed'}</button>
+</div>
+</div>`;
+});
 
-if(half>0) items+=`- Half Rice x${half}\n`;
-if(full>0) items+=`- Full Rice x${full}\n`;
-if(plate>0) items+=`- Plate x${plate}\n`;
-
-let msg=
-`📍 Satyabati Hindu Hotel
-
-👤 ${d.name}
-📞 ${d.phone}
-🏡 ${d.village}
-🚓 ${d.ps}
-
-🛒 Order:
-${items}
-
-💰 Total ₹${d.total}
-
-👉 Please Pay ₹${d.total}
-Send payment screenshot`;
-
-window.open(`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`);
-closePopup();
+document.getElementById("menuBox").innerHTML=html;
 }
 </script>
 
