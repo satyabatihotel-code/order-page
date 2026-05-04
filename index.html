@@ -63,16 +63,6 @@ input {
   margin: 0 10px;
 }
 
-/* Add more */
-.add-more {
-  margin-top: 10px;
-  background: #eee;
-  padding: 10px;
-  text-align: center;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
 /* Total Bar */
 .total-bar {
   position: fixed;
@@ -98,6 +88,24 @@ input {
   font-weight: bold;
   cursor: pointer;
   border-radius: 8px;
+}
+
+/* Popup */
+#popup {
+  display:none;
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.5);
+}
+
+.popup-box {
+  background:white;
+  margin:20% auto;
+  padding:15px;
+  width:90%;
+  max-width:350px;
+  border-radius:10px;
 }
 </style>
 </head>
@@ -135,11 +143,20 @@ input {
 <b>Add-ons</b>
 
 <div class="qty-box">
-  <div>Extra Rice (₹11)</div>
+  <div>Extra Half Rice (₹6)</div>
   <div>
-    <button class="qty-btn" onclick="changeExtra(-1)">-</button>
-    <span id="extraQty">0</span>
-    <button class="qty-btn" onclick="changeExtra(1)">+</button>
+    <button class="qty-btn" onclick="changeHalf(-1)">-</button>
+    <span id="halfQty">0</span>
+    <button class="qty-btn" onclick="changeHalf(1)">+</button>
+  </div>
+</div>
+
+<div class="qty-box">
+  <div>Extra Full Rice (₹11)</div>
+  <div>
+    <button class="qty-btn" onclick="changeFull(-1)">-</button>
+    <span id="fullQty">0</span>
+    <button class="qty-btn" onclick="changeFull(1)">+</button>
   </div>
 </div>
 
@@ -162,6 +179,17 @@ input {
   <button class="btn" onclick="confirmOrder()">Proceed</button>
 </div>
 
+<!-- Popup -->
+<div id="popup">
+  <div class="popup-box">
+    <h3>Confirm Order</h3>
+    <div id="summary"></div>
+    <br>
+    <button onclick="closePopup()" style="width:48%">Edit</button>
+    <button onclick="sendWhatsApp()" style="width:48%; background:#FFC107; border:none; font-weight:bold;">Confirm</button>
+  </div>
+</div>
+
 <script>
 const urlParams = new URLSearchParams(window.location.search);
 const item = urlParams.get("item") || "Item";
@@ -170,33 +198,27 @@ const price = parseInt(urlParams.get("price")) || 0;
 document.getElementById("itemName").innerText = item;
 
 let qty = 1;
-let extra = 0;
+let half = 0;
+let full = 0;
 let plate = 0;
 
-function changeQty(val){
-  qty = Math.max(1, qty + val);
-  document.getElementById("qty").innerText = qty;
-  calc();
-}
+function changeQty(v){ qty = Math.max(1, qty+v); qtyEl(); }
+function changeHalf(v){ half = Math.max(0, half+v); update(); }
+function changeFull(v){ full = Math.max(0, full+v); update(); }
+function changePlate(v){ plate = Math.max(0, plate+v); update(); }
 
-function changeExtra(val){
-  extra = Math.max(0, extra + val);
-  document.getElementById("extraQty").innerText = extra;
-  calc();
-}
+function qtyEl(){ document.getElementById("qty").innerText = qty; update(); }
 
-function changePlate(val){
-  plate = Math.max(0, plate + val);
+function update(){
+  document.getElementById("halfQty").innerText = half;
+  document.getElementById("fullQty").innerText = full;
   document.getElementById("plateQty").innerText = plate;
-  calc();
-}
 
-function calc(){
-  let total = (qty * price) + (extra * 11) + (plate * 2);
+  let total = (qty*price) + (half*6) + (full*11) + (plate*2);
   document.getElementById("total").innerText = total;
 }
 
-calc();
+update();
 
 function confirmOrder(){
 
@@ -215,27 +237,52 @@ function confirmOrder(){
     return;
   }
 
-  let total = (qty * price) + (extra * 11) + (plate * 2);
+  let total = (qty*price) + (half*6) + (full*11) + (plate*2);
 
-  let msg =
-`📍 Satyabati Hindu Hotel Order
+  window.data = {name, phone, village, ps, total};
 
-👤 Name: ${name}
-📞 Phone: ${phone}
-🏡 Village: ${village}
-🚓 P.S: ${ps}
+  let summary = `
+  <b>${name}</b><br><br>
+  ${item} (${qty})<br>
+  Half Rice (${half})<br>
+  Full Rice (${full})<br>
+  Plate (${plate})<br><br>
+  <b>Total ₹${total}</b>
+  `;
+
+  document.getElementById("summary").innerHTML = summary;
+  document.getElementById("popup").style.display="block";
+}
+
+function closePopup(){
+  document.getElementById("popup").style.display="none";
+}
+
+function sendWhatsApp(){
+
+let d = window.data;
+
+let msg =
+`📍 Satyabati Hindu Hotel
+
+👤 ${d.name}
+📞 ${d.phone}
+🏡 ${d.village}
+🚓 ${d.ps}
 
 🛒 Order:
 - ${item} x${qty}
-- Extra Rice x${extra}
+- Half Rice x${half}
+- Full Rice x${full}
 - Plate x${plate}
 
-💰 Total: ₹${total}
+💰 Total ₹${d.total}
 
-👉 Please Pay: ₹${total}
-Send payment screenshot to confirm order`;
+👉 Please Pay ₹${d.total}
+Send payment screenshot`;
 
-  window.open(`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`);
+window.open(`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`);
+closePopup();
 }
 </script>
 
