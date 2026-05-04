@@ -8,7 +8,7 @@
 body {
   font-family: Arial;
   margin: 0;
-  background: #f2f2f2;
+  background: #ffffff;
 }
 
 /* Header */
@@ -22,7 +22,10 @@ body {
 }
 
 /* Container */
-.container { padding: 15px; }
+.container {
+  padding: 15px;
+  padding-bottom: 100px; /* 🔥 prevent overlap */
+}
 
 /* Inputs */
 input {
@@ -39,7 +42,7 @@ input {
   padding: 14px;
   margin-top: 12px;
   border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: 1px solid #eee;
 }
 
 /* Quantity */
@@ -58,31 +61,42 @@ input {
   border-radius: 6px;
 }
 
-/* Add more button */
+/* Add More Button */
 .add-more {
   text-align: center;
-  padding: 12px;
-  background: #eee;
+  padding: 14px;
+  background: #f2f2f2;
   border-radius: 10px;
   cursor: pointer;
   font-weight: bold;
 }
 
-/* Menu item */
+/* Menu Item */
 .menu-item {
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:8px 0;
+  padding:10px 0;
   border-bottom:1px solid #eee;
 }
 
-.menu-item button {
-  background:#FFC107;
+/* Add button */
+.add-btn {
+  background:#ddd;
   border:none;
-  padding:6px 10px;
+  padding:6px 12px;
   border-radius:6px;
-  font-weight:bold;
+  cursor:pointer;
+}
+
+/* Remove button */
+.remove-btn {
+  background:#ff4d4d;
+  color:white;
+  border:none;
+  padding:6px 12px;
+  border-radius:6px;
+  cursor:pointer;
 }
 
 /* Bottom bar */
@@ -237,14 +251,14 @@ let total=0;
 cart.forEach(i=>total+=i.price*i.qty);
 total+=half*6+full*11+plate*2;
 
+document.getElementById("total").innerText=total;
 document.getElementById("halfQty").innerText=half;
 document.getElementById("fullQty").innerText=full;
 document.getElementById("plateQty").innerText=plate;
-document.getElementById("total").innerText=total;
 }
 update();
 
-/* LOAD MORE ITEMS (YOUR SHEET FIXED) */
+/* LOAD ONLY MORE ITEMS SHEET */
 function toggleMenu(){
 let box=document.getElementById("menuBox");
 
@@ -255,18 +269,23 @@ fetch("https://docs.google.com/spreadsheets/d/1ha14_n8IdltiVwrMFYSC5e8l5fnMkJUQk
 .then(r=>r.text())
 .then(d=>{
 const j=JSON.parse(d.substr(47).slice(0,-2));
+
 let html="";
-
 j.table.rows.forEach(r=>{
-let name=r.c[4]?.v;   // E
-let price=r.c[5]?.v;  // F
-let show=r.c[11]?.v;  // L
+let name=r.c[4]?.v;
+let price=r.c[5]?.v;
+let show=r.c[11]?.v;
 
-if(name && (show==="Yes"||show==="yes"||show===true)){
+if(name && (show==="Yes"||show==="yes")){
+let exists = cart.find(i=>i.name===name);
+
 html+=`
 <div class="menu-item">
-<div>${name} (₹${price})</div>
-<button onclick="addItem('${name}',${price})">Add</button>
+<div>${name} ₹${price}</div>
+<button class="${exists?'remove-btn':'add-btn'}"
+onclick="toggleItem('${name}',${price})">
+${exists?'Remove':'Add'}
+</button>
 </div>`;
 }
 });
@@ -278,16 +297,23 @@ box.style.display="none";
 }
 }
 
-function addItem(name,price){
-let f=cart.find(i=>i.name===name);
-if(f){f.qty++}else{cart.push({name,price,qty:1})}
-alert(name+" added");
+/* TOGGLE ADD / REMOVE */
+function toggleItem(name,price){
+let index=cart.findIndex(i=>i.name===name);
+
+if(index>-1){
+cart.splice(index,1);
+}else{
+cart.push({name,price,qty:1});
+}
+
+toggleMenu();
+toggleMenu();
 update();
 }
 
 /* POPUP */
 function confirmOrder(){
-
 let name=document.getElementById("name").value.trim();
 let phone=document.getElementById("phone").value.trim();
 let village=document.getElementById("village").value.trim();
@@ -316,7 +342,6 @@ document.getElementById("popup").style.display="block";
 function closePopup(){document.getElementById("popup").style.display="none";}
 
 function sendWhatsApp(){
-
 let d=window.data;
 let items="";
 
@@ -326,8 +351,7 @@ if(half>0) items+=`- Half Rice x${half}\n`;
 if(full>0) items+=`- Full Rice x${full}\n`;
 if(plate>0) items+=`- Plate x${plate}\n`;
 
-let msg=
-`📍 Satyabati Hindu Hotel
+let msg=`📍 Satyabati Hindu Hotel
 
 👤 ${d.name}
 📞 ${d.phone}
@@ -339,8 +363,7 @@ ${items}
 
 💰 Total ₹${d.total}
 
-👉 Please Pay ₹${d.total}
-Send payment screenshot`;
+👉 Please Pay ₹${d.total}`;
 
 window.open(`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`);
 closePopup();
