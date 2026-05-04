@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order - Satyabati Hindu Hotel</title>
+
+<style>
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #f5f5f5;
+}
+
+/* Header */
+.header {
+  background: #5A5A5A;
+  color: white;
+  text-align: center;
+  padding: 14px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Container */
+.container {
+  padding: 15px;
+}
+
+/* Input */
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* Section */
+.section {
+  background: white;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 10px;
+}
+
+/* Qty */
+.qty-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.qty-btn {
+  background: #5A5A5A;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-size: 16px;
+}
+
+.qty {
+  margin: 0 10px;
+}
+
+/* Add more */
+.add-more {
+  margin-top: 10px;
+  background: #eee;
+  padding: 10px;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Total Bar */
+.total-bar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: white;
+  border-top: 1px solid #ccc;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.btn {
+  background: #FFC107;
+  border: none;
+  padding: 10px 15px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">Satyabati Hindu Hotel</div>
+
+<div class="container">
+
+<!-- Customer -->
+<div class="section">
+<input id="name" placeholder="Enter your Full Name">
+<input id="phone" type="tel" placeholder="Enter Phone Number">
+<input id="village" placeholder="Enter Village Name">
+<input id="ps" placeholder="Enter Police Station">
+</div>
+
+<!-- Product -->
+<div class="section">
+<b id="itemName">Item</b>
+
+<div class="qty-box">
+  <div>Quantity</div>
+  <div>
+    <button class="qty-btn" onclick="changeQty(-1)">-</button>
+    <span class="qty" id="qty">1</span>
+    <button class="qty-btn" onclick="changeQty(1)">+</button>
+  </div>
+</div>
+</div>
+
+<!-- Add-ons -->
+<div class="section">
+<b>Add-ons</b>
+
+<div class="qty-box">
+  <div>Extra Rice (₹11)</div>
+  <div>
+    <button class="qty-btn" onclick="changeExtra(-1)">-</button>
+    <span id="extraQty">0</span>
+    <button class="qty-btn" onclick="changeExtra(1)">+</button>
+  </div>
+</div>
+
+<div class="qty-box">
+  <div>Disposable Plate (₹2)</div>
+  <div>
+    <button class="qty-btn" onclick="changePlate(-1)">-</button>
+    <span id="plateQty">0</span>
+    <button class="qty-btn" onclick="changePlate(1)">+</button>
+  </div>
+</div>
+
+</div>
+
+</div>
+
+<!-- Total -->
+<div class="total-bar">
+  <div class="total">₹ <span id="total">0</span></div>
+  <button class="btn" onclick="confirmOrder()">Proceed</button>
+</div>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const item = urlParams.get("item") || "Item";
+const price = parseInt(urlParams.get("price")) || 0;
+
+document.getElementById("itemName").innerText = item;
+
+let qty = 1;
+let extra = 0;
+let plate = 0;
+
+function changeQty(val){
+  qty = Math.max(1, qty + val);
+  document.getElementById("qty").innerText = qty;
+  calc();
+}
+
+function changeExtra(val){
+  extra = Math.max(0, extra + val);
+  document.getElementById("extraQty").innerText = extra;
+  calc();
+}
+
+function changePlate(val){
+  plate = Math.max(0, plate + val);
+  document.getElementById("plateQty").innerText = plate;
+  calc();
+}
+
+function calc(){
+  let total = (qty * price) + (extra * 11) + (plate * 2);
+  document.getElementById("total").innerText = total;
+}
+
+calc();
+
+function confirmOrder(){
+
+  let name = document.getElementById("name").value.trim();
+  let phone = document.getElementById("phone").value.trim();
+  let village = document.getElementById("village").value.trim();
+  let ps = document.getElementById("ps").value.trim();
+
+  if(!name || !phone || !village || !ps){
+    alert("Please fill all details");
+    return;
+  }
+
+  if(phone.length != 10){
+    alert("Enter valid phone number");
+    return;
+  }
+
+  let total = (qty * price) + (extra * 11) + (plate * 2);
+
+  let msg =
+`📍 Satyabati Hindu Hotel Order
+
+👤 Name: ${name}
+📞 Phone: ${phone}
+🏡 Village: ${village}
+🚓 P.S: ${ps}
+
+🛒 Order:
+- ${item} x${qty}
+- Extra Rice x${extra}
+- Plate x${plate}
+
+💰 Total: ₹${total}
+
+👉 Please Pay: ₹${total}
+Send payment screenshot to confirm order`;
+
+  window.open(`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`);
+}
+</script>
+
+</body>
+</html>
