@@ -5,28 +5,129 @@
 <title>Order - Satyabati Hindu Hotel</title>
 
 <style>
-body {font-family:Arial;margin:0;background:#f5f5f5;}
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #f2f2f2;
+}
 
-.header {background:#5A5A5A;color:white;text-align:center;padding:14px;font-size:20px;font-weight:bold;}
+/* Header */
+.header {
+  background: #5A5A5A;
+  color: white;
+  text-align: center;
+  padding: 16px;
+  font-size: 20px;
+  font-weight: bold;
+}
 
-.container {padding:15px;}
+/* Container */
+.container { padding: 15px; }
 
-input {width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #ccc;}
+/* Inputs */
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 6px 0;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
 
-.section {background:white;padding:12px;margin-top:10px;border-radius:10px;}
+/* Card */
+.section {
+  background: white;
+  padding: 14px;
+  margin-top: 12px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
 
-.qty-box {display:flex;justify-content:space-between;align-items:center;margin-top:10px;}
+/* Quantity */
+.qty-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
 
-.qty-btn {background:#5A5A5A;color:white;border:none;padding:6px 12px;}
+.qty-btn {
+  background: #5A5A5A;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
 
-.total-bar {position:fixed;bottom:0;width:100%;background:white;border-top:1px solid #ccc;padding:12px;display:flex;justify-content:space-between;}
+/* Add more button */
+.add-more {
+  text-align: center;
+  padding: 12px;
+  background: #eee;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
 
-.total {font-size:22px;font-weight:bold;}
+/* Menu item */
+.menu-item {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:8px 0;
+  border-bottom:1px solid #eee;
+}
 
-.btn {background:#FFC107;border:none;padding:10px 15px;font-weight:bold;border-radius:8px;}
+.menu-item button {
+  background:#FFC107;
+  border:none;
+  padding:6px 10px;
+  border-radius:6px;
+  font-weight:bold;
+}
 
-#popup {display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);}
-.popup-box {background:white;margin:20% auto;padding:15px;width:90%;max-width:350px;border-radius:10px;}
+/* Bottom bar */
+.total-bar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: white;
+  border-top: 1px solid #ccc;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.btn {
+  background: #FFC107;
+  border: none;
+  padding: 12px 16px;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+/* Popup */
+#popup {
+  display:none;
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.5);
+}
+
+.popup-box {
+  background:white;
+  margin:20% auto;
+  padding:15px;
+  width:90%;
+  max-width:350px;
+  border-radius:12px;
+}
 </style>
 </head>
 
@@ -36,6 +137,7 @@ input {width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #
 
 <div class="container">
 
+<!-- Customer -->
 <div class="section">
 <input id="name" placeholder="Enter your Full Name">
 <input id="phone" type="tel" placeholder="Enter Phone Number">
@@ -43,6 +145,7 @@ input {width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #
 <input id="ps" placeholder="Enter Police Station">
 </div>
 
+<!-- Main Item -->
 <div class="section">
 <b id="itemName"></b>
 
@@ -56,6 +159,7 @@ input {width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #
 </div>
 </div>
 
+<!-- Add-ons -->
 <div class="section">
 <b>Add-ons</b>
 
@@ -88,23 +192,21 @@ input {width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #
 
 </div>
 
-<!-- ADD MORE ITEMS -->
+<!-- More Items -->
 <div class="section">
-<div onclick="toggleMenu()" style="background:#eee;padding:10px;text-align:center;border-radius:8px;cursor:pointer;">
-+ Add More Items
-</div>
-
+<div class="add-more" onclick="toggleMenu()">+ Add More Items</div>
 <div id="menuBox" style="display:none;margin-top:10px;"></div>
 </div>
 
 </div>
 
+<!-- Bottom -->
 <div class="total-bar">
 <div class="total">₹ <span id="total">0</span></div>
 <button class="btn" onclick="confirmOrder()">Proceed</button>
 </div>
 
-<!-- POPUP -->
+<!-- Popup -->
 <div id="popup">
 <div class="popup-box">
 <h3>Confirm Order</h3>
@@ -121,23 +223,19 @@ const price = parseInt(new URLSearchParams(location.search).get("price")) || 0;
 
 document.getElementById("itemName").innerText = item;
 
-let cart = [{name:item,price:price,qty:1}];
+let cart=[{name:item,price:price,qty:1}];
 let half=0,full=0,plate=0;
 
-/* MAIN ITEM */
 function changeQty(v){
 cart[0].qty=Math.max(1,cart[0].qty+v);
 document.getElementById("qty").innerText=cart[0].qty;
 update();
 }
 
-/* UPDATE */
 function update(){
 let total=0;
-
-cart.forEach(i=>{ total+=i.price*i.qty });
-
-total+=half*6 + full*11 + plate*2;
+cart.forEach(i=>total+=i.price*i.qty);
+total+=half*6+full*11+plate*2;
 
 document.getElementById("halfQty").innerText=half;
 document.getElementById("fullQty").innerText=full;
@@ -146,27 +244,28 @@ document.getElementById("total").innerText=total;
 }
 update();
 
-/* MENU FIXED */
+/* LOAD MORE ITEMS (YOUR SHEET FIXED) */
 function toggleMenu(){
 let box=document.getElementById("menuBox");
 
 if(box.style.display==="none"){
 box.style.display="block";
 
-fetch("https://docs.google.com/spreadsheets/d/1ha14_n8IdltiVwrMFYSC5e8l5fnMkJUQkxHqd1KzpcQ/gviz/tq?tqx=out:json")
+fetch("https://docs.google.com/spreadsheets/d/1ha14_n8IdltiVwrMFYSC5e8l5fnMkJUQkxHqd1KzpcQ/gviz/tq?tqx=out:json&sheet=More%20Items")
 .then(r=>r.text())
 .then(d=>{
 const j=JSON.parse(d.substr(47).slice(0,-2));
 let html="";
 
 j.table.rows.forEach(r=>{
-let name=r.c[4]?.v;
-let price=r.c[5]?.v;
-let show=r.c[11]?.v;
+let name=r.c[4]?.v;   // E
+let price=r.c[5]?.v;  // F
+let show=r.c[11]?.v;  // L
 
 if(name && (show==="Yes"||show==="yes"||show===true)){
-html+=`<div style="display:flex;justify-content:space-between;margin-top:8px;">
-<div>${name} ₹${price}</div>
+html+=`
+<div class="menu-item">
+<div>${name} (₹${price})</div>
 <button onclick="addItem('${name}',${price})">Add</button>
 </div>`;
 }
@@ -179,7 +278,6 @@ box.style.display="none";
 }
 }
 
-/* ADD ITEM */
 function addItem(name,price){
 let f=cart.find(i=>i.name===name);
 if(f){f.qty++}else{cart.push({name,price,qty:1})}
@@ -187,7 +285,7 @@ alert(name+" added");
 update();
 }
 
-/* POPUP FIXED */
+/* POPUP */
 function confirmOrder(){
 
 let name=document.getElementById("name").value.trim();
@@ -203,15 +301,11 @@ let total=document.getElementById("total").innerText;
 window.data={name,phone,village,ps,total};
 
 let items="";
+cart.forEach(i=>{if(i.qty>0){items+=`${i.name} (${i.qty})<br>`;}});
 
-cart.forEach(i=>{
-if(i.qty>0){ items+=`${i.name} (${i.qty})<br>`; }
-});
-
-/* 🔥 FIX: only show if >0 */
-if(half>0){ items+=`Half Rice (${half})<br>`; }
-if(full>0){ items+=`Full Rice (${full})<br>`; }
-if(plate>0){ items+=`Plate (${plate})<br>`; }
+if(half>0) items+=`Half Rice (${half})<br>`;
+if(full>0) items+=`Full Rice (${full})<br>`;
+if(plate>0) items+=`Plate (${plate})<br>`;
 
 document.getElementById("summary").innerHTML=
 `<b>${name}</b><br><br>${items}<br><b>Total ₹${total}</b>`;
@@ -221,21 +315,16 @@ document.getElementById("popup").style.display="block";
 
 function closePopup(){document.getElementById("popup").style.display="none";}
 
-/* WHATSAPP */
 function sendWhatsApp(){
 
 let d=window.data;
-
 let items="";
 
-cart.forEach(i=>{
-if(i.qty>0){ items+=`- ${i.name} x${i.qty}\n`; }
-});
+cart.forEach(i=>{if(i.qty>0){items+=`- ${i.name} x${i.qty}\n`;}});
 
-/* 🔥 FIX */
-if(half>0){ items+=`- Half Rice x${half}\n`; }
-if(full>0){ items+=`- Full Rice x${full}\n`; }
-if(plate>0){ items+=`- Plate x${plate}\n`; }
+if(half>0) items+=`- Half Rice x${half}\n`;
+if(full>0) items+=`- Full Rice x${full}\n`;
+if(plate>0) items+=`- Plate x${plate}\n`;
 
 let msg=
 `📍 Satyabati Hindu Hotel
