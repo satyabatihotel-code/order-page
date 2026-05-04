@@ -11,7 +11,6 @@ body {
   background: #f5f5f5;
 }
 
-/* Header */
 .header {
   background: #5A5A5A;
   color: white;
@@ -21,12 +20,8 @@ body {
   font-weight: bold;
 }
 
-/* Container */
-.container {
-  padding: 15px;
-}
+.container { padding: 15px; }
 
-/* Input */
 input {
   width: 100%;
   padding: 10px;
@@ -35,7 +30,6 @@ input {
   border: 1px solid #ccc;
 }
 
-/* Section */
 .section {
   background: white;
   padding: 12px;
@@ -43,7 +37,6 @@ input {
   border-radius: 10px;
 }
 
-/* Qty */
 .qty-box {
   display: flex;
   justify-content: space-between;
@@ -56,21 +49,15 @@ input {
   color: white;
   border: none;
   padding: 6px 12px;
-  font-size: 16px;
 }
 
-.qty {
-  margin: 0 10px;
-}
-
-/* Total Bar */
 .total-bar {
   position: fixed;
   bottom: 0;
   width: 100%;
   background: white;
   border-top: 1px solid #ccc;
-  padding: 10px;
+  padding: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -78,7 +65,7 @@ input {
 
 .total {
   font-weight: bold;
-  font-size: 18px;
+  font-size: 22px; /* 🔥 bigger */
 }
 
 .btn {
@@ -86,11 +73,9 @@ input {
   border: none;
   padding: 10px 15px;
   font-weight: bold;
-  cursor: pointer;
   border-radius: 8px;
 }
 
-/* Popup */
 #popup {
   display:none;
   position:fixed;
@@ -124,15 +109,15 @@ input {
 <input id="ps" placeholder="Enter Police Station">
 </div>
 
-<!-- Product -->
+<!-- Main Item -->
 <div class="section">
-<b id="itemName">Item</b>
+<b id="itemName"></b>
 
 <div class="qty-box">
   <div>Quantity</div>
   <div>
     <button class="qty-btn" onclick="changeQty(-1)">-</button>
-    <span class="qty" id="qty">1</span>
+    <span id="qty">1</span>
     <button class="qty-btn" onclick="changeQty(1)">+</button>
   </div>
 </div>
@@ -145,49 +130,58 @@ input {
 <div class="qty-box">
   <div>Extra Half Rice (₹6)</div>
   <div>
-    <button class="qty-btn" onclick="changeHalf(-1)">-</button>
+    <button class="qty-btn" onclick="half=Math.max(0,half-1);update()">-</button>
     <span id="halfQty">0</span>
-    <button class="qty-btn" onclick="changeHalf(1)">+</button>
+    <button class="qty-btn" onclick="half++;update()">+</button>
   </div>
 </div>
 
 <div class="qty-box">
   <div>Extra Full Rice (₹11)</div>
   <div>
-    <button class="qty-btn" onclick="changeFull(-1)">-</button>
+    <button class="qty-btn" onclick="full=Math.max(0,full-1);update()">-</button>
     <span id="fullQty">0</span>
-    <button class="qty-btn" onclick="changeFull(1)">+</button>
+    <button class="qty-btn" onclick="full++;update()">+</button>
   </div>
 </div>
 
 <div class="qty-box">
   <div>Disposable Plate (₹2)</div>
   <div>
-    <button class="qty-btn" onclick="changePlate(-1)">-</button>
+    <button class="qty-btn" onclick="plate=Math.max(0,plate-1);update()">-</button>
     <span id="plateQty">0</span>
-    <button class="qty-btn" onclick="changePlate(1)">+</button>
+    <button class="qty-btn" onclick="plate++;update()">+</button>
   </div>
 </div>
 
+</div>
+
+<!-- Add more items -->
+<div class="section">
+<div style="text-align:center; padding:10px; background:#eee; border-radius:8px; cursor:pointer;" onclick="toggleMenu()">
++ Add More Items
+</div>
+
+<div id="menuBox" style="display:none; margin-top:10px;"></div>
 </div>
 
 </div>
 
 <!-- Total -->
 <div class="total-bar">
-  <div class="total">₹ <span id="total">0</span></div>
-  <button class="btn" onclick="confirmOrder()">Proceed</button>
+<div class="total">₹ <span id="total">0</span></div>
+<button class="btn" onclick="confirmOrder()">Proceed</button>
 </div>
 
 <!-- Popup -->
 <div id="popup">
-  <div class="popup-box">
-    <h3>Confirm Order</h3>
-    <div id="summary"></div>
-    <br>
-    <button onclick="closePopup()" style="width:48%">Edit</button>
-    <button onclick="sendWhatsApp()" style="width:48%; background:#FFC107; border:none; font-weight:bold;">Confirm</button>
-  </div>
+<div class="popup-box">
+<h3>Confirm Order</h3>
+<div id="summary"></div>
+<br>
+<button onclick="closePopup()">Edit</button>
+<button onclick="sendWhatsApp()" style="background:#FFC107;border:none;">Confirm</button>
+</div>
 </div>
 
 <script>
@@ -197,72 +191,116 @@ const price = parseInt(urlParams.get("price")) || 0;
 
 document.getElementById("itemName").innerText = item;
 
-let qty = 1;
-let half = 0;
-let full = 0;
-let plate = 0;
+let cart = [{name:item, price:price, qty:1}];
+let half=0, full=0, plate=0;
 
-function changeQty(v){ qty = Math.max(1, qty+v); qtyEl(); }
-function changeHalf(v){ half = Math.max(0, half+v); update(); }
-function changeFull(v){ full = Math.max(0, full+v); update(); }
-function changePlate(v){ plate = Math.max(0, plate+v); update(); }
-
-function qtyEl(){ document.getElementById("qty").innerText = qty; update(); }
+function changeQty(v){
+  cart[0].qty = Math.max(1, cart[0].qty + v);
+  document.getElementById("qty").innerText = cart[0].qty;
+  update();
+}
 
 function update(){
+  let total=0;
+
+  cart.forEach(i => total += i.price*i.qty);
+  total += half*6 + full*11 + plate*2;
+
   document.getElementById("halfQty").innerText = half;
   document.getElementById("fullQty").innerText = full;
   document.getElementById("plateQty").innerText = plate;
-
-  let total = (qty*price) + (half*6) + (full*11) + (plate*2);
   document.getElementById("total").innerText = total;
 }
 
 update();
 
+/* LOAD MENU */
+function toggleMenu(){
+  let box=document.getElementById("menuBox");
+
+  if(box.style.display==="none"){
+    box.style.display="block";
+
+    fetch("https://docs.google.com/spreadsheets/d/1ha14_n8IdltiVwrMFYSC5e8l5fnMkJUQkxHqd1KzpcQ/gviz/tq?tqx=out:json")
+    .then(res=>res.text())
+    .then(data=>{
+      const json=JSON.parse(data.substr(47).slice(0,-2));
+      let rows=json.table.rows;
+
+      let html="";
+      rows.forEach(r=>{
+        let name=r.c[4]?.v;
+        let price=r.c[5]?.v;
+        let show=r.c[11]?.v;
+
+        if(name && (show==="Yes"||show==="yes"||show===true)){
+          html+=`<div style="display:flex;justify-content:space-between;margin-top:8px;">
+          <div>${name} (₹${price})</div>
+          <button onclick="addItem('${name}',${price})">Add</button>
+          </div>`;
+        }
+      });
+
+      box.innerHTML=html;
+    });
+  } else {
+    box.style.display="none";
+  }
+}
+
+function addItem(name,price){
+  let f=cart.find(i=>i.name===name);
+  if(f){f.qty++} else {cart.push({name,price,qty:1})}
+  alert(name+" added");
+  update();
+}
+
+/* POPUP */
 function confirmOrder(){
 
-  let name = document.getElementById("name").value.trim();
-  let phone = document.getElementById("phone").value.trim();
-  let village = document.getElementById("village").value.trim();
-  let ps = document.getElementById("ps").value.trim();
+let name=document.getElementById("name").value.trim();
+let phone=document.getElementById("phone").value.trim();
+let village=document.getElementById("village").value.trim();
+let ps=document.getElementById("ps").value.trim();
 
-  if(!name || !phone || !village || !ps){
-    alert("Please fill all details");
-    return;
-  }
+if(!name||!phone||!village||!ps){alert("Fill all details");return;}
+if(phone.length!=10){alert("Invalid phone");return;}
 
-  if(phone.length != 10){
-    alert("Enter valid phone number");
-    return;
-  }
+let total=document.getElementById("total").innerText;
 
-  let total = (qty*price) + (half*6) + (full*11) + (plate*2);
+window.data={name,phone,village,ps,total};
 
-  window.data = {name, phone, village, ps, total};
+let items="";
+cart.forEach(i=>{
+  if(i.qty>0){ items+=`${i.name} (${i.qty})<br>`;}
+});
 
-  let summary = `
-  <b>${name}</b><br><br>
-  ${item} (${qty})<br>
-  Half Rice (${half})<br>
-  Full Rice (${full})<br>
-  Plate (${plate})<br><br>
-  <b>Total ₹${total}</b>
-  `;
+if(half>0) items+=`Half Rice (${half})<br>`;
+if(full>0) items+=`Full Rice (${full})<br>`;
+if(plate>0) items+=`Plate (${plate})<br>`;
 
-  document.getElementById("summary").innerHTML = summary;
-  document.getElementById("popup").style.display="block";
+document.getElementById("summary").innerHTML=
+`<b>${name}</b><br><br>${items}<br><b>Total ₹${total}</b>`;
+
+document.getElementById("popup").style.display="block";
 }
 
-function closePopup(){
-  document.getElementById("popup").style.display="none";
-}
+function closePopup(){ document.getElementById("popup").style.display="none"; }
 
 function sendWhatsApp(){
 
-let d = window.data;
+let d=window.data;
 
-let msg =
+let items="";
+cart.forEach(i=>{
+  if(i.qty>0){ items+=`- ${i.name} x${i.qty}\n`; }
+});
+
+if(half>0) items+=`- Half Rice x${half}\n`;
+if(full>0) items+=`- Full Rice x${full}\n`;
+if(plate>0) items+=`- Plate x${plate}\n`;
+
+let msg=
 `📍 Satyabati Hindu Hotel
 
 👤 ${d.name}
@@ -271,10 +309,7 @@ let msg =
 🚓 ${d.ps}
 
 🛒 Order:
-- ${item} x${qty}
-- Half Rice x${half}
-- Full Rice x${full}
-- Plate x${plate}
+${items}
 
 💰 Total ₹${d.total}
 
