@@ -2,36 +2,42 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <style>
-body {font-family:Arial;margin:0;background:#fff;}
+body {font-family:Arial;margin:0;background:#f9f9f9;color:#333;}
 
 .header {
   background:#FFC107;
   text-align:center;
   padding:16px;
   font-weight:bold;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .container {
   padding:15px;
-  padding-bottom:220px; /* FIX: prevent overlap */
+  /* Increased padding to ensure 'Add More' button isn't hidden by the fixed bottom bar */
+  padding-bottom: 280px; 
 }
 
 input {
   width:100%;
-  padding:10px;
-  margin:6px 0;
+  padding:12px;
+  margin:8px 0;
   border-radius:8px;
   border:1px solid #ccc;
+  box-sizing: border-box;
 }
 
 .section {
   background:#fff;
-  padding:12px;
-  margin-top:10px;
+  padding:15px;
+  margin-top:12px;
   border-radius:12px;
   border:1px solid #eee;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .qty-box {
@@ -45,30 +51,48 @@ input {
   background:#5A5A5A;
   color:#fff;
   border:none;
-  padding:6px 12px;
+  width: 35px;
+  height: 35px;
+  font-size: 18px;
   border-radius:6px;
+  cursor: pointer;
+}
+
+.qty-btn:active {
+  background: #333;
+}
+
+.item-count {
+  margin: 0 15px;
+  font-weight: bold;
+  min-width: 20px;
+  text-align: center;
 }
 
 .add-more {
   text-align:center;
-  padding:12px;
-  background:#f2f2f2;
+  padding:15px;
+  background:#fff;
+  border: 2px dashed #FFC107;
   border-radius:10px;
   cursor:pointer;
   font-weight:bold;
+  margin-top: 15px;
 }
 
-/* bottom */
+/* bottom total bar */
 .total-bar {
   position:fixed;
   bottom:0;
   width:100%;
   background:#fff;
-  border-top:1px solid #ccc;
-  padding:12px;
+  border-top:2px solid #FFC107;
+  padding:15px;
   display:flex;
   justify-content:space-between;
   align-items:center;
+  box-sizing: border-box;
+  z-index: 999;
 }
 
 .total {
@@ -79,10 +103,10 @@ input {
 .btn {
   background:#FFC107;
   border:none;
-  padding:12px 20px;
+  padding:12px 25px;
   border-radius:10px;
   font-weight:bold;
-  margin-right:60px;
+  cursor: pointer;
 }
 
 /* popup */
@@ -91,16 +115,24 @@ input {
   position:fixed;
   top:0;left:0;
   width:100%;height:100%;
-  background:rgba(0,0,0,0.5);
+  background:rgba(0,0,0,0.6);
+  z-index: 2000;
 }
 
 .popup-box {
   background:#fff;
-  margin:20% auto;
-  padding:15px;
-  width:90%;
+  margin:15% auto;
+  padding:20px;
+  width:85%;
   max-width:350px;
-  border-radius:10px;
+  border-radius:12px;
+}
+
+#summary {
+  font-size: 14px;
+  line-height: 1.6;
+  max-height: 300px;
+  overflow-y: auto;
 }
 </style>
 </head>
@@ -111,236 +143,222 @@ input {
 
 <div class="container">
 
-<!-- FORM -->
-<div class="section">
-<input id="name" placeholder="Enter your Full Name">
-<input id="phone" type="tel" placeholder="Enter WhatsApp Number">
-<input id="email" placeholder="Enter your Email">
-<input id="village" placeholder="Enter Village Name">
-<input id="ps" placeholder="Enter Police Station">
-</div>
+  <!-- FORM SECTION -->
+  <div class="section">
+    <input id="name" placeholder="Enter your Full Name">
+    <input id="phone" type="tel" placeholder="Enter WhatsApp Number">
+    <input id="email" type="email" placeholder="Enter your Email">
+    <input id="village" placeholder="Enter Village Name">
+    <input id="ps" placeholder="Enter Police Station">
+  </div>
 
-<!-- MAIN ITEM -->
-<div class="section">
-<b id="itemName"></b>
+  <!-- MAIN ITEM -->
+  <div class="section">
+    <b id="itemName" style="font-size:18px;"></b>
+    <div class="qty-box">
+      <div>Base Price Quantity</div>
+      <div>
+        <button class="qty-btn" onclick="changeQty(-1)">-</button>
+        <span id="qty" class="item-count">1</span>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+    </div>
+  </div>
 
-<div class="qty-box">
-<div>Quantity</div>
-<div>
-<button class="qty-btn" onclick="changeQty(-1)">-</button>
-<span id="qty">1</span>
-<button class="qty-btn" onclick="changeQty(1)">+</button>
-</div>
-</div>
-</div>
+  <!-- RICE & PLATES -->
+  <div class="section">
+    <b style="color:#666">Add-ons</b>
+    
+    <div class="qty-box">
+      <div>Half Rice (₹6)</div>
+      <div>
+        <button class="qty-btn" onclick="half=Math.max(0,half-1);updateTotal()">-</button>
+        <span id="halfQty" class="item-count">0</span>
+        <button class="qty-btn" onclick="half++;updateTotal()">+</button>
+      </div>
+    </div>
 
-<!-- ADDONS -->
-<div class="section">
-<b>Add-ons</b>
+    <div class="qty-box">
+      <div>Full Rice (₹11)</div>
+      <div>
+        <button class="qty-btn" onclick="full=Math.max(0,full-1);updateTotal()">-</button>
+        <span id="fullQty" class="item-count">0</span>
+        <button class="qty-btn" onclick="full++;updateTotal()">+</button>
+      </div>
+    </div>
 
-<div class="qty-box">
-<div>Half Rice ₹6</div>
-<div>
-<button class="qty-btn" onclick="half=Math.max(0,half-1);updateTotal()">-</button>
-<span id="halfQty">0</span>
-<button class="qty-btn" onclick="half++;updateTotal()">+</button>
-</div>
-</div>
+    <div class="qty-box">
+      <div>Plate (₹2)</div>
+      <div>
+        <button class="qty-btn" onclick="plate=Math.max(0,plate-1);updateTotal()">-</button>
+        <span id="plateQty" class="item-count">0</span>
+        <button class="qty-btn" onclick="plate++;updateTotal()">+</button>
+      </div>
+    </div>
+  </div>
 
-<div class="qty-box">
-<div>Full Rice ₹11</div>
-<div>
-<button class="qty-btn" onclick="full=Math.max(0,full-1);updateTotal()">-</button>
-<span id="fullQty">0</span>
-<button class="qty-btn" onclick="full++;updateTotal()">+</button>
-</div>
-</div>
-
-<div class="qty-box">
-<div>Plate ₹2</div>
-<div>
-<button class="qty-btn" onclick="plate=Math.max(0,plate-1);updateTotal()">-</button>
-<span id="plateQty">0</span>
-<button class="qty-btn" onclick="plate++;updateTotal()">+</button>
-</div>
-</div>
-</div>
-
-<!-- MORE ITEMS -->
-<div class="section">
-<div class="add-more" onclick="loadMore()">+ Add More Items</div>
-<div id="menuBox"></div>
-</div>
+  <!-- LOAD MORE -->
+  <div id="menuBox"></div>
+  <div class="add-more" onclick="loadMore()" id="loadBtn">+ Add More Items</div>
 
 </div>
 
-<!-- TOTAL -->
+<!-- BOTTOM BAR -->
 <div class="total-bar">
-<div class="total">₹ <span id="total">0</span></div>
-<button class="btn" onclick="confirmOrder()">Proceed</button>
+  <div class="total">₹ <span id="total">0</span></div>
+  <button class="btn" onclick="confirmOrder()">Proceed Order</button>
 </div>
 
 <!-- POPUP -->
 <div id="popup">
-<div class="popup-box">
-<h3>Confirm Order</h3>
-<div id="summary"></div><br>
-<button onclick="closePopup()">Edit</button>
-<button style="background:#FFC107;border:none;" onclick="sendOrder()">Confirm</button>
-</div>
+  <div class="popup-box">
+    <h3>Order Summary</h3>
+    <hr>
+    <div id="summary"></div>
+    <hr>
+    <div style="display:flex; justify-content: space-between; margin-top:15px;">
+      <button onclick="closePopup()" style="padding:10px; border:none; background:#eee; border-radius:5px;">Edit</button>
+      <button onclick="sendOrder()" style="padding:10px; border:none; background:#FFC107; border-radius:5px; font-weight:bold;">Confirm & Send</button>
+    </div>
+  </div>
 </div>
 
 <script>
-const item = new URLSearchParams(location.search).get("item") || "Item";
-const price = parseInt(new URLSearchParams(location.search).get("price")) || 0;
+const urlParams = new URLSearchParams(location.search);
+const item = urlParams.get("item") || "Selected Meal";
+const price = parseInt(urlParams.get("price")) || 0;
 
 document.getElementById("itemName").innerText = item;
 
-/* CART */
 let cart = {
-  main: {name:item,price:price,qty:1},
-  more:{}
+  main: {name: item, price: price, qty: 1},
+  more: {}
 };
 
-let half=0,full=0,plate=0;
-let moreData=[],loaded=false;
+let half=0, full=0, plate=0;
+let moreData=[], loaded=false;
 
-/* MAIN QTY */
 function changeQty(v){
-cart.main.qty=Math.max(1,cart.main.qty+v);
-document.getElementById("qty").innerText=cart.main.qty;
-updateTotal();
+  cart.main.qty = Math.max(1, cart.main.qty + v);
+  document.getElementById("qty").innerText = cart.main.qty;
+  updateTotal();
 }
 
-/* TOTAL */
 function updateTotal(){
-let total=cart.main.price*cart.main.qty;
+  let total = cart.main.price * cart.main.qty;
 
-Object.values(cart.more).forEach(i=>{
-total+=i.price*i.qty;
-});
+  Object.values(cart.more).forEach(i => {
+    total += i.price * i.qty;
+  });
 
-total+=half*6+full*11+plate*2;
+  total += (half * 6) + (full * 11) + (plate * 2);
 
-document.getElementById("total").innerText=total;
-
-document.getElementById("halfQty").innerText=half;
-document.getElementById("fullQty").innerText=full;
-document.getElementById("plateQty").innerText=plate;
+  document.getElementById("total").innerText = total;
+  document.getElementById("halfQty").innerText = half;
+  document.getElementById("fullQty").innerText = full;
+  document.getElementById("plateQty").innerText = plate;
 }
 
-/* LOAD MORE ITEMS (2nd SHEET ONLY) */
 function loadMore(){
+  if(loaded) return;
+  
+  const loadBtn = document.getElementById("loadBtn");
+  loadBtn.innerText = "Loading Menu...";
 
-if(loaded){
-document.getElementById("menuBox").style.display="block";
-return;
+  fetch("https://docs.google.com/spreadsheets/d/1qKc-2U5UGNKXbnvXYmBAlou36Uo9avtXe2Y36_PhRVY/gviz/tq?tqx=out:json&sheet=More%20Items")
+  .then(r => r.text())
+  .then(d => {
+    const j = JSON.parse(d.substr(47).slice(0,-2));
+    moreData = [];
+
+    j.table.rows.forEach(r => {
+      let sub = r.c[3]?.v || "";
+      let name = r.c[4]?.v || "";
+      let price = r.c[5]?.v || 0;
+      let show = r.c[11]?.v || "";
+
+      if(name && (show.toLowerCase() === "yes")){
+        moreData.push({
+          id: name + "_" + sub,
+          fullName: name + " " + sub, // Merges name and subcategory
+          price: price
+        });
+      }
+    });
+
+    renderMore();
+    loaded = true;
+    loadBtn.style.display = "none";
+  });
 }
 
-fetch("https://docs.google.com/spreadsheets/d/1qKc-2U5UGNKXbnvXYmBAlou36Uo9avtXe2Y36_PhRVY/gviz/tq?tqx=out:json&sheet=More%20Items")
-.then(r=>r.text())
-.then(d=>{
-const j=JSON.parse(d.substr(47).slice(0,-2));
-
-moreData=[];
-
-j.table.rows.forEach(r=>{
-let sub=r.c[3]?.v;
-let name=r.c[4]?.v;
-let price=r.c[5]?.v;
-let show=r.c[11]?.v;
-
-if(name && (show==="Yes"||show==="yes")){
-moreData.push({
-id:name+"_"+sub,
-name:name+" ("+sub+")",
-price:price
-});
-}
-});
-
-renderMore();
-loaded=true;
-});
-}
-
-/* RENDER */
 function renderMore(){
-let html="";
-
-moreData.forEach(i=>{
-let q=cart.more[i.id]?.qty || 0;
-
-html+=`
-<div class="section">
-<div>${i.name} ₹${i.price}</div>
-
-<div class="qty-box">
-<button class="qty-btn" onclick="updateMore('${i.id}',-1)">-</button>
-<span>${q}</span>
-<button class="qty-btn" onclick="updateMore('${i.id}',1)">+</button>
-</div>
-</div>`;
-});
-
-document.getElementById("menuBox").innerHTML=html;
+  let html = "";
+  moreData.forEach(i => {
+    let q = cart.more[i.id]?.qty || 0;
+    html += `
+    <div class="section">
+      <div style="font-weight:bold;">${i.fullName} <span style="color:#666; font-weight:normal;">₹${i.price}</span></div>
+      <div class="qty-box">
+        <div>Quantity</div>
+        <div>
+          <button class="qty-btn" onclick="updateMore('${i.id}',-1)">-</button>
+          <span class="item-count">${q}</span>
+          <button class="qty-btn" onclick="updateMore('${i.id}',1)">+</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById("menuBox").innerHTML = html;
 }
 
-/* UPDATE MORE */
-function updateMore(id,val){
-
-let item=moreData.find(x=>x.id===id);
-
-if(!cart.more[id] && val>0){
-cart.more[id]={name:item.name,price:item.price,qty:1};
-}else if(cart.more[id]){
-cart.more[id].qty+=val;
-if(cart.more[id].qty<=0) delete cart.more[id];
+function updateMore(id, val){
+  let item = moreData.find(x => x.id === id);
+  if(!cart.more[id] && val > 0){
+    cart.more[id] = {name: item.fullName, price: item.price, qty: 1};
+  } else if(cart.more[id]){
+    cart.more[id].qty += val;
+    if(cart.more[id].qty <= 0) delete cart.more[id];
+  }
+  renderMore();
+  updateTotal();
 }
 
-renderMore();
-updateTotal();
+function validateEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email.trim());
 }
 
-/* EMAIL VALID */
-function validEmail(e){
-return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
-}
-
-/* CONFIRM */
 function confirmOrder(){
+  let emailInput = document.getElementById("email").value;
+  
+  if(!validateEmail(emailInput)){
+    alert("Enter Your Proper Email");
+    return;
+  }
 
-let email=document.getElementById("email").value.trim();
+  let itemsHtml = `<b>${cart.main.name}</b> x ${cart.main.qty}<br>`;
 
-if(!validEmail(email)){
-alert("Enter Your Proper Email");
-return;
-}
+  Object.values(cart.more).forEach(i => {
+    itemsHtml += `<b>${i.name}</b> x ${i.qty}<br>`;
+  });
 
-let items=`${cart.main.name} x${cart.main.qty}<br>`;
+  if(half > 0) itemsHtml += `Half Rice x ${half}<br>`;
+  if(full > 0) itemsHtml += `Full Rice x ${full}<br>`;
+  if(plate > 0) itemsHtml += `Plate x ${plate}<br>`;
 
-Object.values(cart.more).forEach(i=>{
-items+=`${i.name} x${i.qty}<br>`;
-});
-
-if(half>0) items+=`Half Rice x${half}<br>`;
-if(full>0) items+=`Full Rice x${full}<br>`;
-if(plate>0) items+=`Plate x${plate}<br>`;
-
-let total=document.getElementById("total").innerText;
-
-document.getElementById("summary").innerHTML=
-items+`<br><b>Total ₹${total}</b>`;
-
-document.getElementById("popup").style.display="block";
+  let total = document.getElementById("total").innerText;
+  document.getElementById("summary").innerHTML = itemsHtml + `<br><span style="font-size:18px; color:#d32f2f;">Total: ₹${total}</span>`;
+  document.getElementById("popup").style.display = "block";
 }
 
 function closePopup(){
-document.getElementById("popup").style.display="none";
+  document.getElementById("popup").style.display = "none";
 }
 
 function sendOrder(){
-alert("Next step: connect Formspree");
+  alert("Redirecting to Order Processing...");
+  // Connect your Formspree or WhatsApp API here
 }
 
 updateTotal();
