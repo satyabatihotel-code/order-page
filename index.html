@@ -8,7 +8,6 @@ body {font-family:Arial;margin:0;background:#fff;}
 
 .header {
   background:#FFC107;
-  color:#000;
   text-align:center;
   padding:16px;
   font-weight:bold;
@@ -16,7 +15,7 @@ body {font-family:Arial;margin:0;background:#fff;}
 
 .container {
   padding:15px;
-  padding-bottom:220px; /* FIX: prevent hiding */
+  padding-bottom:220px; /* FIX: prevent overlap */
 }
 
 input {
@@ -59,7 +58,7 @@ input {
   font-weight:bold;
 }
 
-/* bottom bar */
+/* bottom */
 .total-bar {
   position:fixed;
   bottom:0;
@@ -72,7 +71,10 @@ input {
   align-items:center;
 }
 
-.total {font-size:22px;font-weight:bold;}
+.total {
+  font-size:22px;
+  font-weight:bold;
+}
 
 .btn {
   background:#FFC107;
@@ -139,27 +141,27 @@ input {
 <div class="qty-box">
 <div>Half Rice ₹6</div>
 <div>
-<button class="qty-btn" onclick="half=Math.max(0,half-1);update()">-</button>
+<button class="qty-btn" onclick="half=Math.max(0,half-1);updateTotal()">-</button>
 <span id="halfQty">0</span>
-<button class="qty-btn" onclick="half++;update()">+</button>
+<button class="qty-btn" onclick="half++;updateTotal()">+</button>
 </div>
 </div>
 
 <div class="qty-box">
 <div>Full Rice ₹11</div>
 <div>
-<button class="qty-btn" onclick="full=Math.max(0,full-1);update()">-</button>
+<button class="qty-btn" onclick="full=Math.max(0,full-1);updateTotal()">-</button>
 <span id="fullQty">0</span>
-<button class="qty-btn" onclick="full++;update()">+</button>
+<button class="qty-btn" onclick="full++;updateTotal()">+</button>
 </div>
 </div>
 
 <div class="qty-box">
 <div>Plate ₹2</div>
 <div>
-<button class="qty-btn" onclick="plate=Math.max(0,plate-1);update()">-</button>
+<button class="qty-btn" onclick="plate=Math.max(0,plate-1);updateTotal()">-</button>
 <span id="plateQty">0</span>
-<button class="qty-btn" onclick="plate++;update()">+</button>
+<button class="qty-btn" onclick="plate++;updateTotal()">+</button>
 </div>
 </div>
 </div>
@@ -194,36 +196,53 @@ const price = parseInt(new URLSearchParams(location.search).get("price")) || 0;
 
 document.getElementById("itemName").innerText = item;
 
-let cart=[{name:item,price:price,qty:1}];
-let half=0,full=0,plate=0;
+/* CART */
+let cart = {
+  main: {name:item,price:price,qty:1},
+  more:{}
+};
 
+let half=0,full=0,plate=0;
+let moreData=[],loaded=false;
+
+/* MAIN QTY */
 function changeQty(v){
-cart[0].qty=Math.max(1,cart[0].qty+v);
-document.getElementById("qty").innerText=cart[0].qty;
-update();
+cart.main.qty=Math.max(1,cart.main.qty+v);
+document.getElementById("qty").innerText=cart.main.qty;
+updateTotal();
 }
 
-function update(){
-let total=0;
-cart.forEach(i=>total+=i.price*i.qty);
+/* TOTAL */
+function updateTotal(){
+let total=cart.main.price*cart.main.qty;
+
+Object.values(cart.more).forEach(i=>{
+total+=i.price*i.qty;
+});
+
 total+=half*6+full*11+plate*2;
+
 document.getElementById("total").innerText=total;
 
 document.getElementById("halfQty").innerText=half;
 document.getElementById("fullQty").innerText=full;
 document.getElementById("plateQty").innerText=plate;
 }
-update();
 
-/* LOAD ONLY SECOND SHEET */
+/* LOAD MORE ITEMS (2nd SHEET ONLY) */
 function loadMore(){
+
+if(loaded){
+document.getElementById("menuBox").style.display="block";
+return;
+}
 
 fetch("https://docs.google.com/spreadsheets/d/1qKc-2U5UGNKXbnvXYmBAlou36Uo9avtXe2Y36_PhRVY/gviz/tq?tqx=out:json&sheet=More%20Items")
 .then(r=>r.text())
 .then(d=>{
 const j=JSON.parse(d.substr(47).slice(0,-2));
 
-let html="";
+moreData=[];
 
 j.table.rows.forEach(r=>{
 let sub=r.c[3]?.v;
@@ -232,51 +251,60 @@ let price=r.c[5]?.v;
 let show=r.c[11]?.v;
 
 if(name && (show==="Yes"||show==="yes")){
+moreData.push({
+id:name+"_"+sub,
+name:name+" ("+sub+")",
+price:price
+});
+}
+});
 
-let key=name+" "+sub;
+renderMore();
+loaded=true;
+});
+}
 
-let found=cart.find(i=>i.key===key);
+/* RENDER */
+function renderMore(){
+let html="";
+
+moreData.forEach(i=>{
+let q=cart.more[i.id]?.qty || 0;
 
 html+=`
 <div class="section">
-<div>${name} (${sub}) ₹${price}</div>
+<div>${i.name} ₹${i.price}</div>
 
 <div class="qty-box">
-<button class="qty-btn" onclick="updateItem('${name}','${sub}',${price},-1)">-</button>
-<span>${found?found.qty:0}</span>
-<button class="qty-btn" onclick="updateItem('${name}','${sub}',${price},1)">+</button>
+<button class="qty-btn" onclick="updateMore('${i.id}',-1)">-</button>
+<span>${q}</span>
+<button class="qty-btn" onclick="updateMore('${i.id}',1)">+</button>
 </div>
 </div>`;
-}
 });
 
 document.getElementById("menuBox").innerHTML=html;
-});
 }
 
-/* UPDATE ITEM */
-function updateItem(name,sub,price,val){
+/* UPDATE MORE */
+function updateMore(id,val){
 
-let key=name+" "+sub;
+let item=moreData.find(x=>x.id===id);
 
-let item=cart.find(i=>i.key===key);
-
-if(!item && val>0){
-cart.push({key,name:name+" ("+sub+")",price,qty:1});
-}else if(item){
-item.qty+=val;
-if(item.qty<=0){
-cart=cart.filter(i=>i.key!==key);
-}
+if(!cart.more[id] && val>0){
+cart.more[id]={name:item.name,price:item.price,qty:1};
+}else if(cart.more[id]){
+cart.more[id].qty+=val;
+if(cart.more[id].qty<=0) delete cart.more[id];
 }
 
-loadMore();
-update();
+renderMore();
+updateTotal();
 }
 
-/* EMAIL VALIDATION */
-function isValidEmail(email){
-return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+/* EMAIL VALID */
+function validEmail(e){
+return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 }
 
 /* CONFIRM */
@@ -284,21 +312,25 @@ function confirmOrder(){
 
 let email=document.getElementById("email").value.trim();
 
-if(!isValidEmail(email)){
+if(!validEmail(email)){
 alert("Enter Your Proper Email");
 return;
 }
 
-let total=document.getElementById("total").innerText;
+let items=`${cart.main.name} x${cart.main.qty}<br>`;
 
-let items="";
-cart.forEach(i=>items+=`${i.name} x${i.qty}<br>`);
+Object.values(cart.more).forEach(i=>{
+items+=`${i.name} x${i.qty}<br>`;
+});
+
 if(half>0) items+=`Half Rice x${half}<br>`;
 if(full>0) items+=`Full Rice x${full}<br>`;
 if(plate>0) items+=`Plate x${plate}<br>`;
 
+let total=document.getElementById("total").innerText;
+
 document.getElementById("summary").innerHTML=
-`${items}<br><b>Total ₹${total}</b>`;
+items+`<br><b>Total ₹${total}</b>`;
 
 document.getElementById("popup").style.display="block";
 }
@@ -308,8 +340,10 @@ document.getElementById("popup").style.display="none";
 }
 
 function sendOrder(){
-alert("Now connect Formspree");
+alert("Next step: connect Formspree");
 }
+
+updateTotal();
 </script>
 
 </body>
