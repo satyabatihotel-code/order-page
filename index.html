@@ -2,285 +2,382 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
-body {font-family:Arial;margin:0;background:#fff;color:#111;}
-.header {background:#FFC107;color:#000;text-align:center;padding:16px;font-weight:bold;font-size:17px;}
-.container {padding:15px;padding-bottom:200px;}
-input {width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;}
-.section {background:#fff;padding:12px;margin-top:10px;border-radius:12px;border:1px solid #eee;}
-.qty-row {display:flex;justify-content:space-between;align-items:center;margin-top:10px;}
-.qty-ctrl {display:flex;align-items:center;gap:10px;}
-.qty-btn {background:#5A5A5A;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:16px;cursor:pointer;}
-.qty-num {font-weight:bold;min-width:20px;text-align:center;}
-.add-more {text-align:center;padding:12px;background:#f2f2f2;border-radius:10px;cursor:pointer;font-weight:bold;}
-.cat-btns,.sub-btns {display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
-.cat-btns button,.sub-btns button {padding:6px 10px;border:none;border-radius:20px;background:#eee;cursor:pointer;}
-.active {background:#5A5A5A !important;color:#fff !important;}
-.menu-item {padding:10px 0;border-bottom:1px solid #eee;}
-.menu-item-top {font-size:14px;margin-bottom:6px;}
-.total-bar {position:sticky;bottom:0;width:100%;background:#fff;border-top:1px solid #ccc;padding:12px;display:flex;justify-content:space-between;align-items:center;box-sizing:border-box;z-index:100;}
-.total {font-size:22px;font-weight:bold;}
-.btn {background:#FFC107;border:none;padding:12px 24px;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer;}
-#popup {display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:200;}
-.popup-box {background:#fff;margin:15% auto;padding:20px;width:88%;max-width:360px;border-radius:12px;}
-.email-error {display:none;color:#c0392b;font-size:13px;margin:-4px 0 6px 4px;}
-.popup-btns {display:flex;gap:10px;margin-top:12px;}
-.popup-btns button {flex:1;padding:10px;border-radius:8px;cursor:pointer;}
+body {font-family:Arial;margin:0;background:#fff;}
+
+.header {
+  background:#FFC107;
+  color:#000;
+  text-align:center;
+  padding:16px;
+  font-weight:bold;
+}
+
+.container {
+  padding:15px;
+  padding-bottom:180px; /* FIXED overlap */
+}
+
+input {
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+.section {
+  background:#fff;
+  padding:12px;
+  margin-top:10px;
+  border-radius:12px;
+  border:1px solid #eee;
+}
+
+.qty-box {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:10px;
+}
+
+.qty-btn {
+  background:#5A5A5A;
+  color:#fff;
+  border:none;
+  padding:6px 12px;
+  border-radius:6px;
+}
+
+/* Add More */
+.add-more {
+  text-align:center;
+  padding:12px;
+  background:#f2f2f2;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+/* Filters */
+.cat-btns,.sub-btns {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+
+.cat-btns button,.sub-btns button {
+  padding:6px 10px;
+  border:none;
+  border-radius:20px;
+  background:#eee;
+}
+
+.active {background:#5A5A5A;color:#fff;}
+
+/* Menu */
+.menu-item {
+  padding:10px 0;
+  border-bottom:1px solid #eee;
+}
+
+.menu-top {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+/* Bottom */
+.total-bar {
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:#fff;
+  border-top:1px solid #ccc;
+  padding:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.total {
+  font-size:22px;
+  font-weight:bold;
+}
+
+.btn {
+  background:#FFC107;
+  border:none;
+  padding:12px 20px;
+  border-radius:10px;
+  font-weight:bold;
+  margin-right:60px;
+}
+
+/* Popup */
+#popup {
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.5);
+}
+
+.popup-box {
+  background:#fff;
+  margin:20% auto;
+  padding:15px;
+  width:90%;
+  max-width:350px;
+  border-radius:10px;
+}
 </style>
 </head>
+
 <body>
 
 <div class="header">Satyabati Hindu Hotel</div>
 
 <div class="container">
 
-  <!-- FORM -->
-  <div class="section">
-    <input id="name" placeholder="Enter your Full Name">
-    <input id="phone" type="tel" placeholder="Enter WhatsApp Number">
-    <input id="email" placeholder="Enter your Email">
-    <div id="emailError" class="email-error">⚠ Enter Your Proper Email</div>
-    <input id="village" placeholder="Enter Village Name">
-    <input id="ps" placeholder="Enter Police Station">
-  </div>
+<!-- FORM -->
+<div class="section">
+<input id="name" placeholder="Enter your Full Name">
+<input id="phone" type="tel" placeholder="Enter WhatsApp Number">
+<input id="email" placeholder="Enter your Email">
+<input id="village" placeholder="Enter Village Name">
+<input id="ps" placeholder="Enter Police Station">
+</div>
 
-  <!-- MAIN ITEM -->
-  <div class="section">
-    <b id="itemName"></b>
-    <div class="qty-row">
-      <div>Quantity</div>
-      <div class="qty-ctrl">
-        <button class="qty-btn" onclick="changeQty(-1)">−</button>
-        <span class="qty-num" id="qty">1</span>
-        <button class="qty-btn" onclick="changeQty(1)">+</button>
-      </div>
-    </div>
-  </div>
+<!-- MAIN ITEM -->
+<div class="section">
+<b id="itemName"></b>
 
-  <!-- ADDONS -->
-  <div class="section">
-    <b>Add-ons</b>
-    <div class="qty-row">
-      <div>Half Rice ₹6</div>
-      <div class="qty-ctrl">
-        <button class="qty-btn" onclick="half=Math.max(0,half-1);update()">−</button>
-        <span class="qty-num" id="halfQty">0</span>
-        <button class="qty-btn" onclick="half++;update()">+</button>
-      </div>
-    </div>
-    <div class="qty-row">
-      <div>Full Rice ₹11</div>
-      <div class="qty-ctrl">
-        <button class="qty-btn" onclick="full=Math.max(0,full-1);update()">−</button>
-        <span class="qty-num" id="fullQty">0</span>
-        <button class="qty-btn" onclick="full++;update()">+</button>
-      </div>
-    </div>
-    <div class="qty-row">
-      <div>Plate ₹2</div>
-      <div class="qty-ctrl">
-        <button class="qty-btn" onclick="plate=Math.max(0,plate-1);update()">−</button>
-        <span class="qty-num" id="plateQty">0</span>
-        <button class="qty-btn" onclick="plate++;update()">+</button>
-      </div>
-    </div>
-  </div>
+<div class="qty-box">
+<div>Quantity</div>
+<div>
+<button class="qty-btn" onclick="changeQty(-1)">-</button>
+<span id="qty">1</span>
+<button class="qty-btn" onclick="changeQty(1)">+</button>
+</div>
+</div>
+</div>
 
-  <!-- MORE ITEMS -->
-  <div class="section">
-    <div class="add-more" onclick="toggleMenu()">+ Add More Items</div>
-    <div class="cat-btns" id="catBtns"></div>
-    <div class="sub-btns" id="subBtns"></div>
-    <div id="menuBox" style="display:none;margin-top:8px;"></div>
-  </div>
+<!-- ADDONS -->
+<div class="section">
+<b>Add-ons</b>
+
+<div class="qty-box">
+<div>Half Rice ₹6</div>
+<div>
+<button class="qty-btn" onclick="half=Math.max(0,half-1);update()">-</button>
+<span id="halfQty">0</span>
+<button class="qty-btn" onclick="half++;update()">+</button>
+</div>
+</div>
+
+<div class="qty-box">
+<div>Full Rice ₹11</div>
+<div>
+<button class="qty-btn" onclick="full=Math.max(0,full-1);update()">-</button>
+<span id="fullQty">0</span>
+<button class="qty-btn" onclick="full++;update()">+</button>
+</div>
+</div>
+
+<div class="qty-box">
+<div>Plate ₹2</div>
+<div>
+<button class="qty-btn" onclick="plate=Math.max(0,plate-1);update()">-</button>
+<span id="plateQty">0</span>
+<button class="qty-btn" onclick="plate++;update()">+</button>
+</div>
+</div>
+</div>
+
+<!-- MORE ITEMS -->
+<div class="section">
+<div class="add-more" onclick="toggleMenu()">+ Add More Items</div>
+
+<div class="cat-btns" id="catBtns"></div>
+<div class="sub-btns" id="subBtns"></div>
+
+<div id="menuBox" style="display:none;"></div>
+</div>
 
 </div>
 
-<!-- TOTAL BAR -->
+<!-- TOTAL -->
 <div class="total-bar">
-  <div class="total">₹ <span id="total">0</span></div>
-  <button class="btn" onclick="confirmOrder()">Proceed</button>
+<div class="total">₹ <span id="total">0</span></div>
+<button class="btn" onclick="confirmOrder()">Proceed</button>
 </div>
 
 <!-- POPUP -->
 <div id="popup">
-  <div class="popup-box">
-    <h3 style="margin-top:0;">Confirm Order</h3>
-    <div id="summary" style="font-size:14px;line-height:1.8;"></div>
-    <div class="popup-btns">
-      <button onclick="closePopup()" style="border:1px solid #ccc;background:#fff;">Edit</button>
-      <button onclick="sendOrder()" style="border:none;background:#FFC107;font-weight:bold;">Confirm</button>
-    </div>
-  </div>
+<div class="popup-box">
+<h3>Confirm Order</h3>
+<div id="summary"></div><br>
+<button onclick="closePopup()">Edit</button>
+<button style="background:#FFC107;border:none;" onclick="sendOrder()">Confirm</button>
+</div>
 </div>
 
 <script>
-const urlParams = new URLSearchParams(location.search);
-const itemName = urlParams.get("item") || "Item";
-const itemPrice = parseInt(urlParams.get("price")) || 0;
-document.getElementById("itemName").innerText = itemName + " ₹" + itemPrice;
+const item = new URLSearchParams(location.search).get("item") || "Item";
+const price = parseInt(new URLSearchParams(location.search).get("price")) || 0;
 
-let cart = [{name: itemName, sub: "", price: itemPrice, qty: 1, isMain: true}];
-let half = 0, full = 0, plate = 0;
-let allItems = [], currentCat = "All", currentSub = "All";
+document.getElementById("itemName").innerText = item;
 
-function changeQty(v) {
-  cart[0].qty = Math.max(1, cart[0].qty + v);
-  document.getElementById("qty").innerText = cart[0].qty;
-  update();
+let cart=[{name:item,price:price,qty:1}];
+let half=0,full=0,plate=0;
+
+let allItems=[],currentCat="All",currentSub="All";
+
+/* MAIN QTY */
+function changeQty(v){
+cart[0].qty=Math.max(1,cart[0].qty+v);
+document.getElementById("qty").innerText=cart[0].qty;
+update();
 }
 
-function update() {
-  let total = 0;
-  cart.forEach(i => total += i.price * i.qty);
-  total += half * 6 + full * 11 + plate * 2;
-  document.getElementById("total").innerText = total;
-  document.getElementById("halfQty").innerText = half;
-  document.getElementById("fullQty").innerText = full;
-  document.getElementById("plateQty").innerText = plate;
+/* TOTAL */
+function update(){
+let total=0;
+cart.forEach(i=>total+=i.price*i.qty);
+total+=half*6+full*11+plate*2;
+document.getElementById("total").innerText=total;
+
+document.getElementById("halfQty").innerText=half;
+document.getElementById("fullQty").innerText=full;
+document.getElementById("plateQty").innerText=plate;
 }
 update();
 
-function toggleMenu() {
-  let box = document.getElementById("menuBox");
-  if (box.style.display === "none") {
-    box.style.display = "block";
-    if (allItems.length === 0) {
-      box.innerHTML = "<p style='color:#888;font-size:13px;'>Loading items...</p>";
-      fetch("https://docs.google.com/spreadsheets/d/1qKc-2U5UGNKXbnvXYmBAlou36Uo9avtXe2Y36_PhRVY/gviz/tq?tqx=out:json&sheet=More%20Items")
-        .then(r => r.text())
-        .then(d => {
-          const j = JSON.parse(d.substr(47).slice(0, -2));
-          allItems = [];
-          j.table.rows.forEach(r => {
-            let cat = r.c[2]?.v;
-            let sub = r.c[3]?.v;
-            let name = r.c[4]?.v;
-            let price = r.c[5]?.v;
-            let show = r.c[11]?.v;
-            if (name && (show === "Yes" || show === "yes")) {
-              allItems.push({cat, sub, name, price});
-            }
-          });
-          createFilters();
-          displayItems();
-        })
-        .catch(() => {
-          box.innerHTML = "<p style='color:#c00;font-size:13px;'>Could not load items.</p>";
-        });
-    } else {
-      displayItems();
-    }
-  } else {
-    box.style.display = "none";
-  }
+/* LOAD SHEET */
+function toggleMenu(){
+let box=document.getElementById("menuBox");
+
+if(box.style.display==="none"){
+box.style.display="block";
+
+fetch("https://docs.google.com/spreadsheets/d/1qKc-2U5UGNKXbnvXYmBAlou36Uo9avtXe2Y36_PhRVY/gviz/tq?tqx=out:json&sheet=More%20Items")
+.then(r=>r.text())
+.then(d=>{
+const j=JSON.parse(d.substr(47).slice(0,-2));
+
+allItems=[];
+
+j.table.rows.forEach(r=>{
+let cat=r.c[2]?.v;
+let sub=r.c[3]?.v;
+let name=r.c[4]?.v;
+let price=r.c[5]?.v;
+let show=r.c[11]?.v;
+
+if(name && (show==="Yes"||show==="yes")){
+allItems.push({cat,sub,name:name+" ("+sub+")",price,base:name});
+}
+});
+
+createFilters();
+displayItems();
+});
+}else{
+box.style.display="none";
+}
 }
 
-function createFilters() {
-  let cats = ["All", ...new Set(allItems.map(i => i.cat).filter(Boolean))];
-  document.getElementById("catBtns").innerHTML = cats.map(c =>
-    `<button onclick="filterCat('${c}')" class="${currentCat===c?'active':''}">${c}</button>`
-  ).join("");
+/* FILTER */
+function createFilters(){
+let cats=["All",...new Set(allItems.map(i=>i.cat))];
+document.getElementById("catBtns").innerHTML=
+cats.map(c=>`<button onclick="filterCat('${c}')">${c}</button>`).join("");
 
-  let subs = ["All", ...new Set(allItems.map(i => i.sub).filter(Boolean))];
-  document.getElementById("subBtns").innerHTML = subs.map(s =>
-    `<button onclick="filterSub('${s}')" class="${currentSub===s?'active':''}">${s}</button>`
-  ).join("");
+let subs=["All",...new Set(allItems.map(i=>i.sub))];
+document.getElementById("subBtns").innerHTML=
+subs.map(s=>`<button onclick="filterSub('${s}')">${s}</button>`).join("");
 }
 
-function filterCat(c) { currentCat = c; createFilters(); displayItems(); }
-function filterSub(s) { currentSub = s; createFilters(); displayItems(); }
+function filterCat(c){currentCat=c;displayItems();}
+function filterSub(s){currentSub=s;displayItems();}
 
-function displayItems() {
-  let filtered = allItems.filter(i =>
-    (currentCat === "All" || i.cat === currentCat) &&
-    (currentSub === "All" || i.sub === currentSub)
-  );
+/* DISPLAY WITH QTY */
+function displayItems(){
+let html="";
+allItems.filter(i=>
+(currentCat==="All"||i.cat===currentCat)&&
+(currentSub==="All"||i.sub===currentSub)
+).forEach(i=>{
 
-  let html = "";
-  filtered.forEach(i => {
-    let key = i.name + "|" + i.sub;
-    let existing = cart.find(x => x.key === key);
-    let qty = existing ? existing.qty : 0;
-    let safeKey = encodeURIComponent(key);
-    html += `
-      <div class="menu-item">
-        <div class="menu-item-top">${i.name} (${i.sub}) <span style="color:#888;">₹${i.price}</span></div>
-        <div class="qty-ctrl">
-          <button class="qty-btn" onclick="updateItem('${i.name.replace(/'/g,"\\'")}','${i.sub.replace(/'/g,"\\'")}',${i.price},-1)">−</button>
-          <span class="qty-num" id="qty_${safeKey}">${qty}</span>
-          <button class="qty-btn" onclick="updateItem('${i.name.replace(/'/g,"\\'")}','${i.sub.replace(/'/g,"\\'")}',${i.price},1)">+</button>
-        </div>
-      </div>`;
-  });
+let existing=cart.find(x=>x.base===i.base);
 
-  document.getElementById("menuBox").innerHTML = html || "<p style='color:#888;font-size:13px;padding:10px 0;'>No items found.</p>";
+html+=`
+<div class="menu-item">
+<div class="menu-top">
+<div>${i.name} ₹${i.price}</div>
+</div>
+
+<div class="qty-box">
+<button class="qty-btn" onclick="updateItem('${i.base}',${i.price},-1)">-</button>
+<span>${existing?existing.qty:0}</span>
+<button class="qty-btn" onclick="updateItem('${i.base}',${i.price},1)">+</button>
+</div>
+</div>`;
+});
+
+document.getElementById("menuBox").innerHTML=html;
 }
 
-function updateItem(name, sub, price, val) {
-  let key = name + "|" + sub;
-  let item = cart.find(i => i.key === key);
-  if (!item && val > 0) {
-    cart.push({name, sub, key, price, qty: 1});
-  } else if (item) {
-    item.qty += val;
-    if (item.qty <= 0) cart = cart.filter(i => i.key !== key);
-  }
-  displayItems();
-  update();
+/* UPDATE ITEM */
+function updateItem(base,price,val){
+let item=cart.find(i=>i.base===base);
+
+if(!item && val>0){
+cart.push({name:base,base:base,price:price,qty:1});
+}else if(item){
+item.qty+=val;
+if(item.qty<=0){
+cart=cart.filter(i=>i.base!==base);
+}
 }
 
-function confirmOrder() {
-  let email = document.getElementById("email").value.trim();
-  let errBox = document.getElementById("emailError");
-  let emailInput = document.getElementById("email");
-
-  let valid = email.length > 0 &&
-              email.includes("@") &&
-              !email.includes(" ") &&
-              email.indexOf("@") > 0 &&
-              email.lastIndexOf(".") > email.indexOf("@");
-
-  if (!valid) {
-    errBox.style.display = "block";
-    emailInput.style.borderColor = "#c0392b";
-    emailInput.focus();
-    return;
-  }
-  errBox.style.display = "none";
-  emailInput.style.borderColor = "#ccc";
-
-  let total = document.getElementById("total").innerText;
-  let itemsHTML = "";
-
-  cart.forEach(i => {
-    if (i.isMain) {
-      itemsHTML += `<b>${i.name}</b> x${i.qty}<br>`;
-    } else {
-      itemsHTML += `<b>${i.name} ${i.sub}</b> x${i.qty}<br>`;
-    }
-  });
-
-  if (half > 0) itemsHTML += `Half Rice x${half}<br>`;
-  if (full > 0) itemsHTML += `Full Rice x${full}<br>`;
-  if (plate > 0) itemsHTML += `Plate x${plate}<br>`;
-
-  let name = document.getElementById("name").value || "-";
-  let phone = document.getElementById("phone").value || "-";
-  let village = document.getElementById("village").value || "-";
-
-  document.getElementById("summary").innerHTML =
-    `<b>Name:</b> ${name}<br><b>Phone:</b> ${phone}<br><b>Village:</b> ${village}<br><br>${itemsHTML}<br><b style="font-size:16px;">Total ₹${total}</b>`;
-
-  document.getElementById("popup").style.display = "block";
+displayItems();
+update();
 }
 
-function closePopup() {
-  document.getElementById("popup").style.display = "none";
+/* CONFIRM */
+function confirmOrder(){
+let email=document.getElementById("email").value.trim();
+
+if(!email || !email.includes("@") || email.includes(" ")){
+alert("Enter Your Proper Email");
+return;
 }
 
-function sendOrder() {
-  alert("Next step: connect Formspree");
+let total=document.getElementById("total").innerText;
+
+let items="";
+cart.forEach(i=>items+=`${i.name} x${i.qty}<br>`);
+if(half>0) items+=`Half Rice x${half}<br>`;
+if(full>0) items+=`Full Rice x${full}<br>`;
+if(plate>0) items+=`Plate x${plate}<br>`;
+
+document.getElementById("summary").innerHTML=
+`${items}<br><b>Total ₹${total}</b>`;
+
+document.getElementById("popup").style.display="block";
+}
+
+function closePopup(){
+document.getElementById("popup").style.display="none";
+}
+
+/* TEMP (FORMSPREE NEXT STEP) */
+function sendOrder(){
+alert("Next step: connect Formspree");
 }
 </script>
 
