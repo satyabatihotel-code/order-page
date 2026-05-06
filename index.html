@@ -4,137 +4,55 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-body {
-  font-family: Arial;
-  margin: 0;
-  background: #f9f9f9;
-}
+body {font-family:Arial;margin:0;background:#f9f9f9;}
 
-/* HEADER FIXED */
 .header {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background: #FFC107;
-  text-align: center;
-  padding: 12px;
-  font-weight: bold;
-  z-index: 1000;
+  position:fixed;top:0;width:100%;
+  background:#FFC107;text-align:center;
+  padding:12px;font-weight:bold;z-index:1000;
 }
 
-/* CONTAINER */
-.container {
-  padding: 10px;
-  padding-top: 55px;
-  padding-bottom: 140px;
-}
+.container {padding:10px;padding-top:55px;padding-bottom:160px;}
 
-/* INPUT */
 input {
-  width: 100%;
-  padding: 10px;
-  margin: 4px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  width:100%;padding:10px;margin:4px 0;
+  border-radius:6px;border:1px solid #ccc;
 }
 
-/* SECTION */
 .section {
-  background: #fff;
-  padding: 10px;
-  margin-top: 6px;
-  border-radius: 10px;
-  border: 1px solid #eee;
+  background:#fff;padding:10px;margin-top:6px;
+  border-radius:10px;border:1px solid #eee;
 }
 
-/* QTY */
 .qty-box {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 6px;
+  display:flex;justify-content:space-between;
+  align-items:center;margin-top:6px;
 }
 
 .qty-btn {
-  background: #5A5A5A;
-  color: #fff;
-  border: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 6px;
+  background:#5A5A5A;color:#fff;
+  border:none;width:30px;height:30px;border-radius:6px;
 }
 
-.count {
-  margin: 0 10px;
-  font-weight: bold;
-}
+.count {margin:0 10px;font-weight:bold;}
 
-/* ADD MORE */
 .add-more {
-  text-align: center;
-  padding: 12px;
-  background: #fff;
-  border: 2px dashed #FFC107;
-  border-radius: 10px;
-  margin-top: 10px;
-  cursor: pointer;
+  text-align:center;padding:12px;
+  background:#fff;border:2px dashed #FFC107;
+  border-radius:10px;margin-top:10px;cursor:pointer;
 }
 
-/* BOTTOM BAR */
 .total-bar {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: #fff;
-  border-top: 2px solid #FFC107;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  position:fixed;bottom:0;width:100%;
+  background:#fff;border-top:2px solid #FFC107;
+  padding:10px;display:flex;justify-content:space-between;
+  align-items:center;
 }
 
-.total {
-  font-size: 20px;
-  font-weight: bold;
-}
+.total {font-size:20px;font-weight:bold;}
+.btn {background:#FFC107;border:none;padding:10px 20px;border-radius:8px;}
 
-.btn {
-  background: #FFC107;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: bold;
-}
-
-/* POPUP */
-#popup {
-  display: none;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-}
-
-.popup-box {
-  background: #fff;
-  margin: 25% auto;
-  padding: 15px;
-  width: 90%;
-  max-width: 320px;
-  border-radius: 10px;
-}
-
-.popup-btn {
-  width: 48%;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-}
-
-.edit { background: #eee; }
-.confirm { background: #FFC107; }
+#menuBox {display:none;}
 </style>
 </head>
 
@@ -144,7 +62,6 @@ input {
 
 <div class="container">
 
-<!-- FORM -->
 <div class="section">
 <input id="name" placeholder="Enter your Full Name">
 <input id="phone" placeholder="Enter WhatsApp Number">
@@ -152,7 +69,6 @@ input {
 <input id="ps" placeholder="Enter Police Station">
 </div>
 
-<!-- MAIN ITEM -->
 <div class="section">
 <b id="itemName"></b>
 
@@ -166,7 +82,6 @@ input {
 </div>
 </div>
 
-<!-- ADD ONS -->
 <div class="section">
 <b>Add-ons</b>
 
@@ -188,48 +103,27 @@ input {
 </div>
 </div>
 
-<div class="qty-box">
-<div>Plate (₹2)</div>
-<div>
-<button class="qty-btn" onclick="plate=Math.max(0,plate-1);update()">-</button>
-<span id="plateQty" class="count">0</span>
-<button class="qty-btn" onclick="plate++;update()">+</button>
-</div>
-</div>
 </div>
 
-<!-- ADD MORE -->
-<div class="add-more">+ Add More Items</div>
+<div class="add-more" onclick="toggleMenu()">+ Add More Items</div>
+<div id="menuBox"></div>
 
 </div>
 
-<!-- TOTAL BAR -->
 <div class="total-bar">
 <div class="total">₹ <span id="total">0</span></div>
-<button class="btn" onclick="confirmOrder()">Proceed</button>
-</div>
-
-<!-- POPUP -->
-<div id="popup">
-<div class="popup-box">
-<h3>Confirm Order</h3>
-<div id="summary"></div><br>
-
-<div style="display:flex;justify-content:space-between;">
-<button class="popup-btn edit" onclick="closePopup()">Edit</button>
-<button class="popup-btn confirm" onclick="sendWhatsApp()">Confirm</button>
-</div>
-
-</div>
+<button class="btn">Proceed</button>
 </div>
 
 <script>
-const item = new URLSearchParams(location.search).get("item") || "Meal";
-const price = parseInt(new URLSearchParams(location.search).get("price")) || 0;
+const item = "Meal";
+const price = 50;
 
 document.getElementById("itemName").innerText = item;
 
-let qty=1, half=0, full=0, plate=0;
+let qty=1,half=0,full=0;
+let moreItems={};
+let menuLoaded=false;
 
 function changeQty(v){
 qty=Math.max(1,qty+v);
@@ -238,74 +132,76 @@ update();
 }
 
 function update(){
-let total = (price*qty)+(half*6)+(full*11)+(plate*2);
+let total = (price*qty)+(half*6)+(full*11);
+
+Object.values(moreItems).forEach(i=>{
+  total += i.price*i.qty;
+});
+
 document.getElementById("total").innerText=total;
 document.getElementById("halfQty").innerText=half;
 document.getElementById("fullQty").innerText=full;
-document.getElementById("plateQty").innerText=plate;
 }
+
+function toggleMenu(){
+let box=document.getElementById("menuBox");
+
+if(box.style.display==="none"){
+  box.style.display="block";
+
+  if(!menuLoaded){
+    fetch("https://docs.google.com/spreadsheets/d/1qKc-2U5UGNKXbnvXYmBAlou36Uo9avtXe2Y36_PhRVY/gviz/tq?tqx=out:json&sheet=More%20Items")
+    .then(r=>r.text())
+    .then(d=>{
+      const j=JSON.parse(d.substr(47).slice(0,-2));
+      let html="";
+
+      j.table.rows.forEach(r=>{
+        let name=r.c[4]?.v;
+        let price=r.c[5]?.v;
+        let show=r.c[11]?.v;
+
+        if(name && (show==="Yes"||show==="yes")){
+          html+=`
+          <div class="section">
+            <b>${name} ₹${price}</b>
+            <div class="qty-box">
+              <div>Quantity</div>
+              <div>
+                <button class="qty-btn" onclick="updateMore('${name}',${price},-1)">-</button>
+                <span class="count" id="m_${name}">0</span>
+                <button class="qty-btn" onclick="updateMore('${name}',${price},1)">+</button>
+              </div>
+            </div>
+          </div>`;
+        }
+      });
+
+      box.innerHTML=html;
+      menuLoaded=true;
+    });
+  }
+
+}else{
+  box.style.display="none";
+}
+}
+
+function updateMore(name,price,val){
+
+if(!moreItems[name] && val>0){
+  moreItems[name]={price:price,qty:1};
+}else if(moreItems[name]){
+  moreItems[name].qty+=val;
+  if(moreItems[name].qty<=0) delete moreItems[name];
+}
+
+document.getElementById("m_"+name).innerText = moreItems[name]?.qty || 0;
+
 update();
-
-/* POPUP */
-function confirmOrder(){
-
-let name=document.getElementById("name").value;
-let phone=document.getElementById("phone").value;
-let village=document.getElementById("village").value;
-let ps=document.getElementById("ps").value;
-
-if(!name||!phone||!village||!ps){
-alert("Fill all details");
-return;
 }
 
-let total=document.getElementById("total").innerText;
-
-let orderText = `${item}*${qty}\n`;
-if(half>0) orderText += `Half Rice*${half}\n`;
-if(full>0) orderText += `Full Rice*${full}\n`;
-if(plate>0) orderText += `Plate*${plate}\n`;
-
-document.getElementById("summary").innerHTML =
-`<b>${name}</b><br><br>${orderText.replace(/\n/g,"<br>")}<br><b>Total ₹${total}</b>`;
-
-window.data={name,phone,village,ps,total,orderText};
-
-document.getElementById("popup").style.display="block";
-}
-
-function closePopup(){
-document.getElementById("popup").style.display="none";
-}
-
-/* WHATSAPP SEND */
-function sendWhatsApp(){
-
-let d=window.data;
-
-let msg =
-`New Order
-
-${d.name}
-phone no -${d.phone}
-village - ${d.village}
-P.S - ${d.ps}
-
-Order-
-${d.orderText}
-
-Total - ₹${d.total}
-
-Pay Here:
-https://res.cloudinary.com/dh6npc54z/image/upload/f_auto,q_auto/WhatsApp_Image_2026-04-22_at
-
-Please Pay ₹${d.total}
-Send the Payment screenshot For Confirmation
-
-Thank You`;
-
-window.open(`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`);
-}
+update();
 </script>
 
 </body>
