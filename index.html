@@ -126,7 +126,10 @@ input {
 
 <div class="section">
 <input id="name" placeholder="Enter your Full Name">
+
+<!-- ✅ MOBILE KEYPAD + VALIDATION -->
 <input id="phone" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="Enter WhatsApp Number">
+
 <input id="village" placeholder="Enter Village Name">
 <input id="ps" placeholder="Enter Police Station">
 </div>
@@ -209,6 +212,7 @@ document.getElementById("itemName").innerText = item;
 let cart = { main:{name:item,price:price,qty:1}, more:{} };
 
 let half=0,full=0,plate=0;
+let moreData=[],loaded=false;
 
 function changeQty(v){
 cart.main.qty=Math.max(1,cart.main.qty+v);
@@ -231,6 +235,79 @@ document.getElementById("fullQty").innerText=full;
 document.getElementById("plateQty").innerText=plate;
 }
 
+function loadMore(){
+if(loaded) return;
+
+let btn=document.getElementById("loadBtn");
+btn.innerText="Loading...";
+
+fetch("https://docs.google.com/spreadsheets/d/1qKc-2U5UGNKXbnvXYmBAlou36Uo9avtXe2Y36_PhRVY/gviz/tq?tqx=out:json&sheet=More%20Items")
+.then(r=>r.text())
+.then(d=>{
+const j=JSON.parse(d.substr(47).slice(0,-2));
+
+moreData=[];
+
+j.table.rows.forEach(r=>{
+let name=r.c[4]?.v;
+let price=r.c[5]?.v;
+let show=r.c[11]?.v;
+
+if(name && show && show.toLowerCase()=="yes"){
+moreData.push({
+id:name,
+name:name,
+price:price
+});
+}
+});
+
+renderMore();
+loaded=true;
+btn.style.display="none";
+});
+}
+
+function renderMore(){
+let html="";
+
+moreData.forEach(i=>{
+let q=cart.more[i.id]?.qty||0;
+
+html+=`
+<div class="section">
+<div><b>${i.name}</b> ₹${i.price}</div>
+
+<div class="qty-box">
+<div>Quantity</div>
+<div>
+<button class="qty-btn" onclick="updateMore('${i.id}',-1)">-</button>
+<span class="item-count">${q}</span>
+<button class="qty-btn" onclick="updateMore('${i.id}',1)">+</button>
+</div>
+</div>
+
+</div>`;
+});
+
+document.getElementById("menuBox").innerHTML=html;
+}
+
+function updateMore(id,val){
+let item=moreData.find(x=>x.id==id);
+
+if(!cart.more[id] && val>0){
+cart.more[id]={name:item.name,price:item.price,qty:1};
+}
+else if(cart.more[id]){
+cart.more[id].qty+=val;
+if(cart.more[id].qty<=0) delete cart.more[id];
+}
+
+renderMore();
+updateTotal();
+}
+
 function confirmOrder(){
 
 let name=document.getElementById("name").value.trim();
@@ -238,6 +315,7 @@ let phone=document.getElementById("phone").value.trim();
 let village=document.getElementById("village").value.trim();
 let ps=document.getElementById("ps").value.trim();
 
+/* ✅ PHONE VALIDATION */
 if(!/^\d{10}$/.test(phone)){
 alert("Wrong Phone Number");
 return;
@@ -249,6 +327,10 @@ return;
 }
 
 let items=`${cart.main.name} x${cart.main.qty}<br>`;
+
+Object.values(cart.more).forEach(i=>{
+items+=`${i.name} x${i.qty}<br>`;
+});
 
 if(half>0) items+=`Half Rice x${half}<br>`;
 if(full>0) items+=`Full Rice x${full}<br>`;
@@ -282,6 +364,10 @@ Order:
 ${cart.main.name} x${cart.main.qty}
 `;
 
+Object.values(cart.more).forEach(i=>{
+msg+=`${i.name} x${i.qty}\n`;
+});
+
 if(half>0) msg+=`Half Rice x${half}\n`;
 if(full>0) msg+=`Full Rice x${full}\n`;
 if(plate>0) msg+=`Plate x${plate}\n`;
@@ -296,16 +382,7 @@ Please Pay ₹${total} and Send Payment Screenshot
 
 Thank You`;
 
-/* ✅ DIRECT + FALLBACK */
-let appUrl = "whatsapp://send?phone=919836697502&text=" + encodeURIComponent(msg);
-let webUrl = "https://api.whatsapp.com/send?phone=919836697502&text=" + encodeURIComponent(msg);
-
-window.location.href = appUrl;
-
-setTimeout(function(){
-  window.location.href = webUrl;
-}, 1200);
-
+window.open(`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`);
 }
 
 updateTotal();
