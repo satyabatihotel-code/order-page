@@ -4,33 +4,306 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-body {font-family:Arial;text-align:center;padding:30px;background:#f9f9f9;}
-.box {
-  background:#fff;
-  padding:20px;
-  border-radius:12px;
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #f9f9f9;
 }
+
+/* HEADER FIXED */
+.header {
+  background:#FFC107;
+  text-align:center;
+  padding:12px;
+  font-weight:bold;
+  position:fixed;
+  top:0;
+  width:100%;
+  z-index:1000;
+}
+
+/* CONTAINER */
+.container {
+  padding:10px;
+  padding-top:60px;
+  padding-bottom:150px;
+}
+
+/* INPUT */
+input {
+  width:100%;
+  padding:10px;
+  margin:4px 0;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+/* SECTION */
+.section {
+  background:#fff;
+  padding:10px;
+  margin-top:8px;
+  border-radius:10px;
+  border:1px solid #eee;
+}
+
+/* QTY */
+.qty-box {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:6px;
+}
+
+.qty-btn {
+  background:#5A5A5A;
+  color:#fff;
+  border:none;
+  width:30px;
+  height:30px;
+  border-radius:6px;
+}
+
+.count {
+  margin:0 10px;
+  font-weight:bold;
+}
+
+/* ADD MORE */
+.add-more {
+  text-align:center;
+  padding:12px;
+  background:#fff;
+  border:2px dashed #FFC107;
+  border-radius:10px;
+  margin-top:10px;
+  cursor:pointer;
+}
+
+/* BOTTOM BAR */
+.total-bar {
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:#fff;
+  border-top:2px solid #FFC107;
+  padding:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.total {
+  font-size:20px;
+  font-weight:bold;
+}
+
+.btn {
+  background:#FFC107;
+  border:none;
+  padding:10px 20px;
+  border-radius:8px;
+  font-weight:bold;
+  margin-left:10px;
+}
+
+/* POPUP */
+#popup {
+  display:none;
+  position:fixed;
+  top:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+}
+
+.popup-box {
+  background:#fff;
+  margin:20% auto;
+  padding:15px;
+  width:90%;
+  max-width:320px;
+  border-radius:10px;
+}
+
+.popup-btn {
+  width:48%;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+.edit {background:#eee;}
+.confirm {background:#FFC107;}
 </style>
 </head>
 
 <body>
 
-<div class="box">
-<h2>✅ Payment Successful</h2>
+<div class="header">Satyabati Hindu Hotel</div>
 
-<p id="orderId"></p>
-<p id="total"></p>
+<div class="container">
 
-<p>We will contact you shortly</p>
+<!-- FORM -->
+<div class="section">
+<input id="name" placeholder="Enter your Full Name">
+<input id="phone" placeholder="Enter WhatsApp Number">
+<input id="village" placeholder="Enter Village Name">
+<input id="ps" placeholder="Enter Police Station">
+</div>
+
+<!-- MAIN ITEM -->
+<div class="section">
+<b id="itemName"></b>
+
+<div class="qty-box">
+<div>Quantity</div>
+<div>
+<button class="qty-btn" onclick="changeQty(-1)">-</button>
+<span id="qty" class="count">1</span>
+<button class="qty-btn" onclick="changeQty(1)">+</button>
+</div>
+</div>
+</div>
+
+<!-- ADD ONS -->
+<div class="section">
+<b>Add-ons</b>
+
+<div class="qty-box">
+<div>Half Rice (₹6)</div>
+<div>
+<button class="qty-btn" onclick="half=Math.max(0,half-1);update()">-</button>
+<span id="halfQty" class="count">0</span>
+<button class="qty-btn" onclick="half++;update()">+</button>
+</div>
+</div>
+
+<div class="qty-box">
+<div>Full Rice (₹11)</div>
+<div>
+<button class="qty-btn" onclick="full=Math.max(0,full-1);update()">-</button>
+<span id="fullQty" class="count">0</span>
+<button class="qty-btn" onclick="full++;update()">+</button>
+</div>
+</div>
+
+<div class="qty-box">
+<div>Plate (₹2)</div>
+<div>
+<button class="qty-btn" onclick="plate=Math.max(0,plate-1);update()">-</button>
+<span id="plateQty" class="count">0</span>
+<button class="qty-btn" onclick="plate++;update()">+</button>
+</div>
+</div>
+</div>
+
+<!-- ADD MORE -->
+<div class="add-more">+ Add More Items</div>
+
+</div>
+
+<!-- TOTAL BAR -->
+<div class="total-bar">
+<div class="total">₹ <span id="total">0</span></div>
+<button class="btn" onclick="confirmOrder()">Proceed</button>
+</div>
+
+<!-- POPUP -->
+<div id="popup">
+<div class="popup-box">
+<h3>Confirm Order</h3>
+<div id="summary"></div><br>
+
+<div style="display:flex;justify-content:space-between;">
+<button class="popup-btn edit" onclick="closePopup()">Edit</button>
+<button class="popup-btn confirm" onclick="sendWhatsApp()">Confirm</button>
+</div>
+
+</div>
 </div>
 
 <script>
-let total=new URLSearchParams(location.search).get("total");
+const item = new URLSearchParams(location.search).get("item") || "Meal";
+const price = parseInt(new URLSearchParams(location.search).get("price")) || 0;
 
-let id="ORD"+Math.floor(Math.random()*100000);
+document.getElementById("itemName").innerText = item;
 
-document.getElementById("orderId").innerText="Order ID: "+id;
-document.getElementById("total").innerText="Paid: ₹"+total;
+let qty=1, half=0, full=0, plate=0;
+
+function changeQty(v){
+qty=Math.max(1,qty+v);
+document.getElementById("qty").innerText=qty;
+update();
+}
+
+function update(){
+let total = (price*qty)+(half*6)+(full*11)+(plate*2);
+document.getElementById("total").innerText=total;
+document.getElementById("halfQty").innerText=half;
+document.getElementById("fullQty").innerText=full;
+document.getElementById("plateQty").innerText=plate;
+}
+update();
+
+/* POPUP */
+function confirmOrder(){
+
+let name=document.getElementById("name").value;
+let phone=document.getElementById("phone").value;
+let village=document.getElementById("village").value;
+let ps=document.getElementById("ps").value;
+
+if(!name||!phone||!village||!ps){
+alert("Fill all details");
+return;
+}
+
+let items = `${item} x${qty}<br>`;
+if(half>0) items+=`Half Rice x${half}<br>`;
+if(full>0) items+=`Full Rice x${full}<br>`;
+if(plate>0) items+=`Plate x${plate}<br>`;
+
+let total=document.getElementById("total").innerText;
+
+document.getElementById("summary").innerHTML=
+`<b>${name}</b><br><br>${items}<br><b>Total ₹${total}</b>`;
+
+window.orderData={name,phone,village,ps,total,items};
+
+document.getElementById("popup").style.display="block";
+}
+
+function closePopup(){
+document.getElementById("popup").style.display="none";
+}
+
+/* WHATSAPP */
+function sendWhatsApp(){
+
+let d=window.orderData;
+
+let msg=
+`New Order
+
+${d.name}
+phone no -${d.phone}
+village - ${d.village}
+P.S - ${d.ps}
+
+Order -
+${d.items.replace(/<br>/g,"\n")}
+
+Total - ₹${d.total}
+
+Please Pay ₹${d.total}
+Send Payment Screenshot For Confirmation
+
+Thank You`;
+
+window.open(`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`);
+}
 </script>
 
 </body>
