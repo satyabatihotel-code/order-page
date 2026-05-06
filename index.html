@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
 body {font-family:Arial;margin:0;background:#f9f9f9;color:#333;}
 
@@ -13,126 +14,66 @@ body {font-family:Arial;margin:0;background:#f9f9f9;color:#333;}
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.container {
-  padding:15px;
-  /* Increased padding to ensure 'Add More' button isn't hidden by the fixed bottom bar */
-  padding-bottom: 280px; 
-}
+.container {padding:15px;padding-bottom:280px;}
 
 input {
-  width:100%;
-  padding:12px;
-  margin:8px 0;
-  border-radius:8px;
-  border:1px solid #ccc;
-  box-sizing: border-box;
+  width:100%;padding:12px;margin:8px 0;
+  border-radius:8px;border:1px solid #ccc;
 }
 
 .section {
-  background:#fff;
-  padding:15px;
-  margin-top:12px;
-  border-radius:12px;
-  border:1px solid #eee;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  background:#fff;padding:15px;margin-top:12px;
+  border-radius:12px;border:1px solid #eee;
 }
 
 .qty-box {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:10px;
+  display:flex;justify-content:space-between;
+  align-items:center;margin-top:10px;
 }
 
 .qty-btn {
-  background:#5A5A5A;
-  color:#fff;
-  border:none;
-  width: 35px;
-  height: 35px;
-  font-size: 18px;
+  background:#5A5A5A;color:#fff;
+  border:none;width:35px;height:35px;
   border-radius:6px;
-  cursor: pointer;
 }
 
-.qty-btn:active {
-  background: #333;
-}
-
-.item-count {
-  margin: 0 15px;
-  font-weight: bold;
-  min-width: 20px;
-  text-align: center;
-}
+.item-count {margin:0 15px;font-weight:bold;}
 
 .add-more {
-  text-align:center;
-  padding:15px;
-  background:#fff;
-  border: 2px dashed #FFC107;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:bold;
-  margin-top: 15px;
+  text-align:center;padding:15px;
+  background:#fff;border:2px dashed #FFC107;
+  border-radius:10px;cursor:pointer;font-weight:bold;
 }
 
-/* bottom total bar */
+/* bottom */
 .total-bar {
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:#fff;
-  border-top:2px solid #FFC107;
-  padding:15px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  box-sizing: border-box;
-  z-index: 999;
+  position:fixed;bottom:0;width:100%;
+  background:#fff;border-top:2px solid #FFC107;
+  padding:15px;display:flex;
+  justify-content:space-between;align-items:center;
 }
 
-.total {
-  font-size:22px;
-  font-weight:bold;
-}
+.total {font-size:22px;font-weight:bold;}
 
 .btn {
-  background:#FFC107;
-  border:none;
-  padding:12px 25px;
-  border-radius:10px;
+  background:#FFC107;border:none;
+  padding:12px 25px;border-radius:10px;
   font-weight:bold;
-  cursor: pointer;
 }
 
 /* popup */
 #popup {
-  display:none;
-  position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
+  display:none;position:fixed;
+  top:0;left:0;width:100%;height:100%;
   background:rgba(0,0,0,0.6);
-  z-index: 2000;
 }
 
 .popup-box {
-  background:#fff;
-  margin:15% auto;
-  padding:20px;
-  width:85%;
-  max-width:350px;
+  background:#fff;margin:15% auto;
+  padding:20px;width:85%;max-width:350px;
   border-radius:12px;
-}
-
-#summary {
-  font-size: 14px;
-  line-height: 1.6;
-  max-height: 300px;
-  overflow-y: auto;
 }
 </style>
 </head>
@@ -143,225 +84,255 @@ input {
 
 <div class="container">
 
-  <!-- FORM SECTION -->
-  <div class="section">
-    <input id="name" placeholder="Enter your Full Name">
-    <input id="phone" type="tel" placeholder="Enter WhatsApp Number">
-    <input id="email" type="email" placeholder="Enter your Email">
-    <input id="village" placeholder="Enter Village Name">
-    <input id="ps" placeholder="Enter Police Station">
-  </div>
+<div class="section">
+<input id="name" placeholder="Enter your Full Name">
+<input id="phone" type="tel" placeholder="Enter WhatsApp Number">
+<input id="village" placeholder="Enter Village Name">
+<input id="ps" placeholder="Enter Police Station">
+</div>
 
-  <!-- MAIN ITEM -->
-  <div class="section">
-    <b id="itemName" style="font-size:18px;"></b>
-    <div class="qty-box">
-      <div>Base Price Quantity</div>
-      <div>
-        <button class="qty-btn" onclick="changeQty(-1)">-</button>
-        <span id="qty" class="item-count">1</span>
-        <button class="qty-btn" onclick="changeQty(1)">+</button>
-      </div>
-    </div>
-  </div>
+<div class="section">
+<b id="itemName"></b>
 
-  <!-- RICE & PLATES -->
-  <div class="section">
-    <b style="color:#666">Add-ons</b>
-    
-    <div class="qty-box">
-      <div>Half Rice (₹6)</div>
-      <div>
-        <button class="qty-btn" onclick="half=Math.max(0,half-1);updateTotal()">-</button>
-        <span id="halfQty" class="item-count">0</span>
-        <button class="qty-btn" onclick="half++;updateTotal()">+</button>
-      </div>
-    </div>
+<div class="qty-box">
+<div>Quantity</div>
+<div>
+<button class="qty-btn" onclick="changeQty(-1)">-</button>
+<span id="qty" class="item-count">1</span>
+<button class="qty-btn" onclick="changeQty(1)">+</button>
+</div>
+</div>
+</div>
 
-    <div class="qty-box">
-      <div>Full Rice (₹11)</div>
-      <div>
-        <button class="qty-btn" onclick="full=Math.max(0,full-1);updateTotal()">-</button>
-        <span id="fullQty" class="item-count">0</span>
-        <button class="qty-btn" onclick="full++;updateTotal()">+</button>
-      </div>
-    </div>
+<!-- ADDONS -->
+<div class="section">
+<b>Add-ons</b>
 
-    <div class="qty-box">
-      <div>Plate (₹2)</div>
-      <div>
-        <button class="qty-btn" onclick="plate=Math.max(0,plate-1);updateTotal()">-</button>
-        <span id="plateQty" class="item-count">0</span>
-        <button class="qty-btn" onclick="plate++;updateTotal()">+</button>
-      </div>
-    </div>
-  </div>
+<div class="qty-box">
+<div>Half Rice (₹6)</div>
+<div>
+<button class="qty-btn" onclick="half=Math.max(0,half-1);update()">-</button>
+<span id="halfQty">0</span>
+<button class="qty-btn" onclick="half++;update()">+</button>
+</div>
+</div>
 
-  <!-- LOAD MORE -->
-  <div id="menuBox"></div>
-  <div class="add-more" onclick="loadMore()" id="loadBtn">+ Add More Items</div>
+<div class="qty-box">
+<div>Full Rice (₹11)</div>
+<div>
+<button class="qty-btn" onclick="full=Math.max(0,full-1);update()">-</button>
+<span id="fullQty">0</span>
+<button class="qty-btn" onclick="full++;update()">+</button>
+</div>
+</div>
+
+<div class="qty-box">
+<div>Plate (₹2)</div>
+<div>
+<button class="qty-btn" onclick="plate=Math.max(0,plate-1);update()">-</button>
+<span id="plateQty">0</span>
+<button class="qty-btn" onclick="plate++;update()">+</button>
+</div>
+</div>
 
 </div>
 
-<!-- BOTTOM BAR -->
+<!-- MORE ITEMS -->
+<div id="menuBox"></div>
+<div class="add-more" onclick="loadMore()" id="loadBtn">+ Add More Items</div>
+
+</div>
+
+<!-- BOTTOM -->
 <div class="total-bar">
-  <div class="total">₹ <span id="total">0</span></div>
-  <button class="btn" onclick="confirmOrder()">Proceed Order</button>
+<div class="total">₹ <span id="total">0</span></div>
+<button class="btn" onclick="confirmOrder()">Proceed</button>
 </div>
 
 <!-- POPUP -->
 <div id="popup">
-  <div class="popup-box">
-    <h3>Order Summary</h3>
-    <hr>
-    <div id="summary"></div>
-    <hr>
-    <div style="display:flex; justify-content: space-between; margin-top:15px;">
-      <button onclick="closePopup()" style="padding:10px; border:none; background:#eee; border-radius:5px;">Edit</button>
-      <button onclick="sendOrder()" style="padding:10px; border:none; background:#FFC107; border-radius:5px; font-weight:bold;">Confirm & Send</button>
-    </div>
-  </div>
+<div class="popup-box">
+<h3>Confirm Order</h3>
+<div id="summary"></div><br>
+<button onclick="closePopup()">Edit</button>
+<button onclick="sendOrder()" style="background:#FFC107;border:none;">Confirm</button>
+</div>
 </div>
 
 <script>
-const urlParams = new URLSearchParams(location.search);
-const item = urlParams.get("item") || "Selected Meal";
-const price = parseInt(urlParams.get("price")) || 0;
+const item = new URLSearchParams(location.search).get("item") || "Item";
+const price = parseInt(new URLSearchParams(location.search).get("price")) || 0;
 
 document.getElementById("itemName").innerText = item;
 
-let cart = {
-  main: {name: item, price: price, qty: 1},
-  more: {}
-};
+let cart={main:{name:item,price:price,qty:1},more:{}};
+let half=0,full=0,plate=0;
+let moreData=[],loaded=false;
 
-let half=0, full=0, plate=0;
-let moreData=[], loaded=false;
-
+/* MAIN QTY */
 function changeQty(v){
-  cart.main.qty = Math.max(1, cart.main.qty + v);
-  document.getElementById("qty").innerText = cart.main.qty;
-  updateTotal();
+cart.main.qty=Math.max(1,cart.main.qty+v);
+document.getElementById("qty").innerText=cart.main.qty;
+update();
 }
 
-function updateTotal(){
-  let total = cart.main.price * cart.main.qty;
+/* TOTAL */
+function update(){
+let total=cart.main.price*cart.main.qty;
 
-  Object.values(cart.more).forEach(i => {
-    total += i.price * i.qty;
-  });
+Object.values(cart.more).forEach(i=>total+=i.price*i.qty);
 
-  total += (half * 6) + (full * 11) + (plate * 2);
+total+=half*6+full*11+plate*2;
 
-  document.getElementById("total").innerText = total;
-  document.getElementById("halfQty").innerText = half;
-  document.getElementById("fullQty").innerText = full;
-  document.getElementById("plateQty").innerText = plate;
+document.getElementById("total").innerText=total;
+document.getElementById("halfQty").innerText=half;
+document.getElementById("fullQty").innerText=full;
+document.getElementById("plateQty").innerText=plate;
 }
+update();
 
+/* LOAD MORE (2nd sheet only) */
 function loadMore(){
-  if(loaded) return;
-  
-  const loadBtn = document.getElementById("loadBtn");
-  loadBtn.innerText = "Loading Menu...";
+if(loaded) return;
 
-  fetch("https://docs.google.com/spreadsheets/d/1qKc-2U5UGNKXbnvXYmBAlou36Uo9avtXe2Y36_PhRVY/gviz/tq?tqx=out:json&sheet=More%20Items")
-  .then(r => r.text())
-  .then(d => {
-    const j = JSON.parse(d.substr(47).slice(0,-2));
-    moreData = [];
+fetch("https://docs.google.com/spreadsheets/d/1qKc-2U5UGNKXbnvXYmBAlou36Uo9avtXe2Y36_PhRVY/gviz/tq?tqx=out:json&sheet=More%20Items")
+.then(r=>r.text())
+.then(d=>{
+const j=JSON.parse(d.substr(47).slice(0,-2));
 
-    j.table.rows.forEach(r => {
-      let sub = r.c[3]?.v || "";
-      let name = r.c[4]?.v || "";
-      let price = r.c[5]?.v || 0;
-      let show = r.c[11]?.v || "";
+j.table.rows.forEach(r=>{
+let sub=r.c[3]?.v||"";
+let name=r.c[4]?.v||"";
+let price=r.c[5]?.v||0;
+let show=r.c[11]?.v||"";
 
-      if(name && (show.toLowerCase() === "yes")){
-        moreData.push({
-          id: name + "_" + sub,
-          fullName: name + " " + sub, // Merges name and subcategory
-          price: price
-        });
-      }
-    });
+if(name && show.toLowerCase()==="yes"){
+moreData.push({
+id:name+sub,
+name:`${sub} ${name}`,   // 🔥 FIXED FORMAT (Curry Katapona)
+price:price
+});
+}
+});
 
-    renderMore();
-    loaded = true;
-    loadBtn.style.display = "none";
-  });
+renderMore();
+loaded=true;
+document.getElementById("loadBtn").style.display="none";
+});
 }
 
+/* RENDER */
 function renderMore(){
-  let html = "";
-  moreData.forEach(i => {
-    let q = cart.more[i.id]?.qty || 0;
-    html += `
-    <div class="section">
-      <div style="font-weight:bold;">${i.fullName} <span style="color:#666; font-weight:normal;">₹${i.price}</span></div>
-      <div class="qty-box">
-        <div>Quantity</div>
-        <div>
-          <button class="qty-btn" onclick="updateMore('${i.id}',-1)">-</button>
-          <span class="item-count">${q}</span>
-          <button class="qty-btn" onclick="updateMore('${i.id}',1)">+</button>
-        </div>
-      </div>
-    </div>`;
-  });
-  document.getElementById("menuBox").innerHTML = html;
+let html="";
+moreData.forEach(i=>{
+let q=cart.more[i.id]?.qty||0;
+
+html+=`
+<div class="section">
+<div>${i.name} ₹${i.price}</div>
+<div class="qty-box">
+<button class="qty-btn" onclick="updateMore('${i.id}',-1)">-</button>
+<span class="item-count">${q}</span>
+<button class="qty-btn" onclick="updateMore('${i.id}',1)">+</button>
+</div>
+</div>`;
+});
+document.getElementById("menuBox").innerHTML=html;
 }
 
-function updateMore(id, val){
-  let item = moreData.find(x => x.id === id);
-  if(!cart.more[id] && val > 0){
-    cart.more[id] = {name: item.fullName, price: item.price, qty: 1};
-  } else if(cart.more[id]){
-    cart.more[id].qty += val;
-    if(cart.more[id].qty <= 0) delete cart.more[id];
-  }
-  renderMore();
-  updateTotal();
+/* UPDATE MORE */
+function updateMore(id,val){
+let item=moreData.find(x=>x.id===id);
+
+if(!cart.more[id] && val>0){
+cart.more[id]={name:item.name,price:item.price,qty:1};
+}else if(cart.more[id]){
+cart.more[id].qty+=val;
+if(cart.more[id].qty<=0) delete cart.more[id];
 }
 
-function validateEmail(email) {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email.trim());
+renderMore();
+update();
 }
 
+/* CONFIRM */
 function confirmOrder(){
-  let emailInput = document.getElementById("email").value;
-  
-  if(!validateEmail(emailInput)){
-    alert("Enter Your Proper Email");
-    return;
-  }
 
-  let itemsHtml = `<b>${cart.main.name}</b> x ${cart.main.qty}<br>`;
+let name=document.getElementById("name").value.trim();
+let phone=document.getElementById("phone").value.trim();
+let village=document.getElementById("village").value.trim();
+let ps=document.getElementById("ps").value.trim();
 
-  Object.values(cart.more).forEach(i => {
-    itemsHtml += `<b>${i.name}</b> x ${i.qty}<br>`;
-  });
+if(!name||!phone||!village||!ps){
+alert("Fill all details");return;
+}
+if(phone.length!=10){
+alert("Invalid phone");return;
+}
 
-  if(half > 0) itemsHtml += `Half Rice x ${half}<br>`;
-  if(full > 0) itemsHtml += `Full Rice x ${full}<br>`;
-  if(plate > 0) itemsHtml += `Plate x ${plate}<br>`;
+let items=`${cart.main.name} x${cart.main.qty}`;
 
-  let total = document.getElementById("total").innerText;
-  document.getElementById("summary").innerHTML = itemsHtml + `<br><span style="font-size:18px; color:#d32f2f;">Total: ₹${total}</span>`;
-  document.getElementById("popup").style.display = "block";
+Object.values(cart.more).forEach(i=>{
+items+=`, ${i.name} x${i.qty}`;
+});
+
+if(half>0) items+=`, Half Rice x${half}`;
+if(full>0) items+=`, Full Rice x${full}`;
+if(plate>0) items+=`, Plate x${plate}`;
+
+let total=document.getElementById("total").innerText;
+
+document.getElementById("summary").innerHTML=
+`<b>${name}</b><br><br>${items}<br><br><b>Total ₹${total}</b>`;
+
+document.getElementById("popup").style.display="block";
+}
+
+/* SEND WHATSAPP */
+function sendOrder(){
+
+let name=document.getElementById("name").value;
+let phone=document.getElementById("phone").value;
+let village=document.getElementById("village").value;
+let ps=document.getElementById("ps").value;
+let total=document.getElementById("total").innerText;
+
+let items=`${cart.main.name} x${cart.main.qty}`;
+
+Object.values(cart.more).forEach(i=>{
+items+=`, ${i.name} x${i.qty}`;
+});
+
+if(half>0) items+=`, Half Rice x${half}`;
+if(full>0) items+=`, Full Rice x${full}`;
+if(plate>0) items+=`, Plate x${plate}`;
+
+let upi=`upi://pay?pa=triparnatalukdar6@okhdfcbank&pn=Satyabati&am=${total}&cu=INR&tn=Satyabati`;
+
+let msg=
+`New Order
+
+${name}
+Phone - ${phone}
+Village - ${village}
+P.S - ${ps}
+
+Order - ${items}
+
+Total - ₹${total}
+
+Pay Now:
+${upi}
+
+Send screenshot for confirmation
+Thank You`;
+
+window.open(`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`);
 }
 
 function closePopup(){
-  document.getElementById("popup").style.display = "none";
+document.getElementById("popup").style.display="none";
 }
-
-function sendOrder(){
-  alert("Redirecting to Order Processing...");
-  // Connect your Formspree or WhatsApp API here
-}
-
-updateTotal();
 </script>
 
 </body>
