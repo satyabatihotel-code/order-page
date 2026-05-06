@@ -4,9 +4,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-body {font-family:Arial;margin:0;background:#f9f9f9;color:#333;}
+body {font-family:Arial;margin:0;background:#f9f9f9;}
 
-/* HEADER FIXED */
 .header {
   background:#FFC107;
   text-align:center;
@@ -17,13 +16,11 @@ body {font-family:Arial;margin:0;background:#f9f9f9;color:#333;}
   z-index:1000;
 }
 
-/* CLEAN SPACING */
 .container {
   padding:10px;
   padding-bottom:180px;
 }
 
-/* INPUT */
 input {
   width:100%;
   padding:10px;
@@ -32,21 +29,17 @@ input {
   border:1px solid #ccc;
 }
 
-/* SECTION */
 .section {
   background:#fff;
   padding:12px;
   margin-top:8px;
   border-radius:10px;
-  border:1px solid #eee;
 }
 
-/* QTY */
 .qty-box {
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-top:8px;
 }
 
 .qty-btn {
@@ -58,23 +51,16 @@ input {
   border-radius:6px;
 }
 
-.item-count {
-  margin:0 10px;
-  font-weight:bold;
-}
+.item-count {margin:0 10px;}
 
-/* ADD MORE BUTTON */
 .add-more {
   text-align:center;
   padding:12px;
   border:2px dashed #FFC107;
   border-radius:10px;
-  font-weight:bold;
   margin:10px 0;
-  background:#fff;
 }
 
-/* TOTAL BAR */
 .total-bar {
   position:fixed;
   bottom:0;
@@ -84,21 +70,15 @@ input {
   padding:12px;
   display:flex;
   justify-content:space-between;
-  align-items:center;
 }
-
-.total {font-size:20px;font-weight:bold;}
 
 .btn {
   background:#FFC107;
   border:none;
   padding:10px 18px;
   border-radius:8px;
-  font-weight:bold;
-  margin-right:30px;
 }
 
-/* POPUP */
 #popup {
   display:none;
   position:fixed;
@@ -113,17 +93,7 @@ input {
   padding:15px;
   width:90%;
   max-width:350px;
-  border-radius:10px;
 }
-
-.popup-btn {
-  width:48%;
-  padding:10px;
-  border:none;
-  border-radius:6px;
-  font-weight:bold;
-}
-
 </style>
 </head>
 
@@ -133,7 +103,6 @@ input {
 
 <div class="container">
 
-<!-- FORM -->
 <div class="section">
 <input id="name" placeholder="Enter your Full Name">
 <input id="phone" placeholder="Enter WhatsApp Number">
@@ -141,7 +110,6 @@ input {
 <input id="ps" placeholder="Enter Police Station">
 </div>
 
-<!-- MAIN ITEM -->
 <div class="section">
 <b id="itemName"></b>
 
@@ -155,7 +123,6 @@ input {
 </div>
 </div>
 
-<!-- ADD ONS -->
 <div class="section">
 <b>Add-ons</b>
 
@@ -163,7 +130,7 @@ input {
 <div>Half Rice ₹6</div>
 <div>
 <button class="qty-btn" onclick="half=Math.max(0,half-1);updateTotal()">-</button>
-<span id="halfQty" class="item-count">0</span>
+<span id="halfQty">0</span>
 <button class="qty-btn" onclick="half++;updateTotal()">+</button>
 </div>
 </div>
@@ -172,7 +139,7 @@ input {
 <div>Full Rice ₹11</div>
 <div>
 <button class="qty-btn" onclick="full=Math.max(0,full-1);updateTotal()">-</button>
-<span id="fullQty" class="item-count">0</span>
+<span id="fullQty">0</span>
 <button class="qty-btn" onclick="full++;updateTotal()">+</button>
 </div>
 </div>
@@ -181,36 +148,29 @@ input {
 <div>Plate ₹2</div>
 <div>
 <button class="qty-btn" onclick="plate=Math.max(0,plate-1);updateTotal()">-</button>
-<span id="plateQty" class="item-count">0</span>
+<span id="plateQty">0</span>
 <button class="qty-btn" onclick="plate++;updateTotal()">+</button>
 </div>
 </div>
 
 </div>
 
-<!-- MORE ITEMS -->
 <div id="menuBox"></div>
 <div class="add-more" onclick="loadMore()" id="loadBtn">+ Add More Items</div>
 
 </div>
 
-<!-- TOTAL -->
 <div class="total-bar">
-<div class="total">₹ <span id="total">0</span></div>
+<div>₹ <span id="total">0</span></div>
 <button class="btn" onclick="confirmOrder()">Proceed</button>
 </div>
 
-<!-- POPUP -->
 <div id="popup">
 <div class="popup-box">
 <h3>Confirm Order</h3>
 <div id="summary"></div><br>
-
-<div style="display:flex;justify-content:space-between;">
-<button class="popup-btn" style="background:#eee" onclick="closePopup()">Edit</button>
-<button class="popup-btn" style="background:#FFC107" onclick="sendOrder()">Confirm</button>
-</div>
-
+<button onclick="closePopup()">Edit</button>
+<button onclick="sendOrder()">Confirm</button>
 </div>
 </div>
 
@@ -250,9 +210,6 @@ document.getElementById("plateQty").innerText=plate;
 function loadMore(){
 if(loaded) return;
 
-let btn=document.getElementById("loadBtn");
-btn.innerText="Loading...";
-
 fetch("https://docs.google.com/spreadsheets/d/1qKc-2U5UGNKXbnvXYmBAlou36Uo9avtXe2Y36_PhRVY/gviz/tq?tqx=out:json&sheet=More%20Items")
 .then(r=>r.text())
 .then(d=>{
@@ -262,14 +219,13 @@ moreData=[];
 
 j.table.rows.forEach(r=>{
 let name=r.c[4]?.v;
-let sub=r.c[3]?.v||"";
 let price=r.c[5]?.v;
 let show=r.c[11]?.v;
 
-if(name && show && show.toLowerCase()=="yes"){
+if(name && (show===true || show==="Yes" || show==="yes" || show==="TRUE")){
 moreData.push({
-id:name+"_"+sub,
-name:name+" "+sub,
+id:name,
+name:name,
 price:price
 });
 }
@@ -277,7 +233,7 @@ price:price
 
 renderMore();
 loaded=true;
-btn.style.display="none";
+document.getElementById("loadBtn").style.display="none";
 });
 }
 
@@ -295,7 +251,7 @@ html+=`
 <div>Quantity</div>
 <div>
 <button class="qty-btn" onclick="updateMore('${i.id}',-1)">-</button>
-<span class="item-count">${q}</span>
+<span>${q}</span>
 <button class="qty-btn" onclick="updateMore('${i.id}',1)">+</button>
 </div>
 </div>
@@ -323,28 +279,44 @@ updateTotal();
 
 function confirmOrder(){
 
-let name=document.getElementById("name").value.trim();
-let phone=document.getElementById("phone").value.trim();
-let village=document.getElementById("village").value.trim();
-let ps=document.getElementById("ps").value.trim();
+let name=document.getElementById("name").value;
+let phone=document.getElementById("phone").value;
+let village=document.getElementById("village").value;
+let ps=document.getElementById("ps").value;
 
-if(!name||!phone||!village||!ps){alert("Fill all details");return;}
-
-let items=`${cart.main.name} x${cart.main.qty}<br>`;
+let items=`${cart.main.name} x${cart.main.qty}\n`;
 
 Object.values(cart.more).forEach(i=>{
-items+=`${i.name} x${i.qty}<br>`;
+items+=`${i.name} x${i.qty}\n`;
 });
 
-if(half>0) items+=`Half Rice x${half}<br>`;
-if(full>0) items+=`Full Rice x${full}<br>`;
-if(plate>0) items+=`Plate x${plate}<br>`;
+if(half>0) items+=`Half Rice x${half}\n`;
+if(full>0) items+=`Full Rice x${full}\n`;
+if(plate>0) items+=`Plate x${plate}\n`;
 
 let total=document.getElementById("total").innerText;
 
-document.getElementById("summary").innerHTML=
-`<b>${name}</b><br><br>${items}<br><b>Total ₹${total}</b>`;
+window.msg=`Satyabati Hindu Hotel
 
+New Order
+
+${name}
+Phone-${phone}
+Village-${village}
+PS-${ps}
+
+Order:
+${items}
+
+Total-${total}
+
+Pay here:
+https://res.cloudinary.com/dh6npc54z/image/upload/f_auto,q_auto/WhatsApp_Image_2026-04-22_at
+
+Send payment screenshot
+Thank You`;
+
+document.getElementById("summary").innerText=window.msg;
 document.getElementById("popup").style.display="block";
 }
 
@@ -353,31 +325,7 @@ document.getElementById("popup").style.display="none";
 }
 
 function sendOrder(){
-
-let total=document.getElementById("total").innerText;
-
-let msg=`New Order
-${document.getElementById("name").value}
-Phone-${document.getElementById("phone").value}
-Village-${document.getElementById("village").value}
-PS-${document.getElementById("ps").value}
-
-Order:
-`;
-
-Object.values(cart.more).forEach(i=>{
-msg+=`${i.name} x${i.qty}\n`;
-});
-
-msg+=`Total-${total}
-
-Pay here:
-https://res.cloudinary.com/dh6npc54z/image/upload/f_auto,q_auto/WhatsApp_Image_2026-04-22_at
-
-Send screenshot after payment
-Thank You`;
-
-window.open(`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`);
+window.open(`https://wa.me/919836697502?text=${encodeURIComponent(window.msg)}`);
 }
 
 updateTotal();
