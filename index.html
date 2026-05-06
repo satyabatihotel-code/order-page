@@ -6,7 +6,6 @@
 <style>
 body {font-family:Arial;margin:0;background:#f9f9f9;color:#333;}
 
-/* HEADER FIXED */
 .header {
   background:#FFC107;
   text-align:center;
@@ -17,13 +16,11 @@ body {font-family:Arial;margin:0;background:#f9f9f9;color:#333;}
   z-index:1000;
 }
 
-/* CLEAN SPACING */
 .container {
   padding:10px;
   padding-bottom:180px;
 }
 
-/* INPUT */
 input {
   width:100%;
   padding:10px;
@@ -32,7 +29,6 @@ input {
   border:1px solid #ccc;
 }
 
-/* SECTION */
 .section {
   background:#fff;
   padding:12px;
@@ -41,7 +37,6 @@ input {
   border:1px solid #eee;
 }
 
-/* QTY */
 .qty-box {
   display:flex;
   justify-content:space-between;
@@ -63,7 +58,6 @@ input {
   font-weight:bold;
 }
 
-/* ADD MORE BUTTON */
 .add-more {
   text-align:center;
   padding:12px;
@@ -74,7 +68,6 @@ input {
   background:#fff;
 }
 
-/* TOTAL BAR */
 .total-bar {
   position:fixed;
   bottom:0;
@@ -98,7 +91,6 @@ input {
   margin-right:30px;
 }
 
-/* POPUP */
 #popup {
   display:none;
   position:fixed;
@@ -123,7 +115,6 @@ input {
   border-radius:6px;
   font-weight:bold;
 }
-
 </style>
 </head>
 
@@ -133,15 +124,16 @@ input {
 
 <div class="container">
 
-<!-- FORM -->
 <div class="section">
 <input id="name" placeholder="Enter your Full Name">
-<input id="phone" placeholder="Enter WhatsApp Number">
+
+<!-- ✅ MOBILE KEYPAD + VALIDATION -->
+<input id="phone" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="Enter WhatsApp Number">
+
 <input id="village" placeholder="Enter Village Name">
 <input id="ps" placeholder="Enter Police Station">
 </div>
 
-<!-- MAIN ITEM -->
 <div class="section">
 <b id="itemName"></b>
 
@@ -155,7 +147,6 @@ input {
 </div>
 </div>
 
-<!-- ADD ONS -->
 <div class="section">
 <b>Add-ons</b>
 
@@ -188,19 +179,16 @@ input {
 
 </div>
 
-<!-- MORE ITEMS -->
 <div id="menuBox"></div>
 <div class="add-more" onclick="loadMore()" id="loadBtn">+ Add More Items</div>
 
 </div>
 
-<!-- TOTAL -->
 <div class="total-bar">
 <div class="total">₹ <span id="total">0</span></div>
 <button class="btn" onclick="confirmOrder()">Proceed</button>
 </div>
 
-<!-- POPUP -->
 <div id="popup">
 <div class="popup-box">
 <h3>Confirm Order</h3>
@@ -262,14 +250,13 @@ moreData=[];
 
 j.table.rows.forEach(r=>{
 let name=r.c[4]?.v;
-let sub=r.c[3]?.v||"";
 let price=r.c[5]?.v;
 let show=r.c[11]?.v;
 
 if(name && show && show.toLowerCase()=="yes"){
 moreData.push({
-id:name+"_"+sub,
-name:name+" "+sub,
+id:name,
+name:name,
 price:price
 });
 }
@@ -328,7 +315,16 @@ let phone=document.getElementById("phone").value.trim();
 let village=document.getElementById("village").value.trim();
 let ps=document.getElementById("ps").value.trim();
 
-if(!name||!phone||!village||!ps){alert("Fill all details");return;}
+/* ✅ PHONE VALIDATION */
+if(!/^\d{10}$/.test(phone)){
+alert("Wrong Phone Number");
+return;
+}
+
+if(!name||!village||!ps){
+alert("Fill all details");
+return;
+}
 
 let items=`${cart.main.name} x${cart.main.qty}<br>`;
 
@@ -356,25 +352,34 @@ function sendOrder(){
 
 let total=document.getElementById("total").innerText;
 
-let msg=`New Order
+let msg=`Satyabati Hindu Hotel
+New Order
+
 ${document.getElementById("name").value}
-Phone-${document.getElementById("phone").value}
-Village-${document.getElementById("village").value}
-PS-${document.getElementById("ps").value}
+Phone - ${document.getElementById("phone").value}
+Village - ${document.getElementById("village").value}
+P.S - ${document.getElementById("ps").value}
 
 Order:
+${cart.main.name} x${cart.main.qty}
 `;
 
 Object.values(cart.more).forEach(i=>{
 msg+=`${i.name} x${i.qty}\n`;
 });
 
-msg+=`Total-${total}
+if(half>0) msg+=`Half Rice x${half}\n`;
+if(full>0) msg+=`Full Rice x${full}\n`;
+if(plate>0) msg+=`Plate x${plate}\n`;
+
+msg+=`
+Total - ₹${total}
 
 Pay here:
-https://res.cloudinary.com/dh6npc54z/image/upload/f_auto,q_auto/WhatsApp_Image_2026-04-22_at
+https://res.cloudinary.com/dh6npc54z/image/upload/f_auto,q_auto/WhatsApp_Image_2026-04-22_at_8.26.01_PM_moxqfr
 
-Send screenshot after payment
+Please Pay ₹${total} and Send Payment Screenshot
+
 Thank You`;
 
 window.open(`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`);
