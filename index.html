@@ -27,6 +27,7 @@ input {
   margin:5px 0;
   border-radius:8px;
   border:1px solid #ccc;
+  box-sizing:border-box;
 }
 
 .section {
@@ -78,6 +79,7 @@ input {
   display:flex;
   justify-content:space-between;
   align-items:center;
+  box-sizing:border-box;
 }
 
 .total {
@@ -85,7 +87,7 @@ input {
   font-weight:bold;
 }
 
-/* ✅ BIGGER PROCEED BUTTON */
+/* BIGGER PROCEED BUTTON */
 .btn {
   background:#FFC107;
   border:none;
@@ -99,8 +101,10 @@ input {
 #popup {
   display:none;
   position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
   background:rgba(0,0,0,0.6);
 }
 
@@ -132,8 +136,11 @@ input {
 <div class="section">
 <input id="name" placeholder="Enter your Full Name">
 
-<!-- ✅ CHANGED TEXT -->
-<input id="phone" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="Enter Phone Number">
+<input id="phone" 
+type="tel" 
+inputmode="numeric" 
+pattern="[0-9]*" 
+placeholder="Enter Phone Number">
 
 <input id="village" placeholder="Enter Village Name">
 <input id="ps" placeholder="Enter Police Station">
@@ -197,10 +204,12 @@ input {
 <div id="popup">
 <div class="popup-box">
 <h3>Confirm Order</h3>
+
 <div id="summary"></div><br>
 
 <div style="display:flex;justify-content:space-between;">
 <button class="popup-btn" style="background:#eee" onclick="closePopup()">Edit</button>
+
 <button class="popup-btn" style="background:#FFC107" onclick="sendOrder()">Confirm</button>
 </div>
 
@@ -210,11 +219,17 @@ input {
 <script>
 
 const item = new URLSearchParams(location.search).get("item") || "Meal";
-const price = parseInt(new URLSearchParams(location.search).get("price")) || 0;
+
+const price = parseInt(
+new URLSearchParams(location.search).get("price")
+) || 0;
 
 document.getElementById("itemName").innerText = item;
 
-let cart = { main:{name:item,price:price,qty:1}, more:{} };
+let cart = {
+main:{name:item,price:price,qty:1},
+more:{}
+};
 
 let half=0,full=0,plate=0;
 let moreData=[],loaded=false;
@@ -226,6 +241,7 @@ updateTotal();
 }
 
 function updateTotal(){
+
 let total=cart.main.price*cart.main.qty;
 
 Object.values(cart.more).forEach(i=>{
@@ -241,93 +257,138 @@ document.getElementById("plateQty").innerText=plate;
 }
 
 function loadMore(){
+
 if(loaded) return;
 
 let btn=document.getElementById("loadBtn");
 btn.innerText="Loading...";
 
 fetch("https://docs.google.com/spreadsheets/d/1qKc-2U5UGNKXbnvXYmBAlou36Uo9avtXe2Y36_PhRVY/gviz/tq?tqx=out:json&sheet=More%20Items")
+
 .then(r=>r.text())
+
 .then(d=>{
+
 const j=JSON.parse(d.substr(47).slice(0,-2));
 
 moreData=[];
 
 j.table.rows.forEach(r=>{
+
 let name=r.c[4]?.v;
 let price=r.c[5]?.v;
 let show=r.c[11]?.v;
 
 if(name && show && show.toLowerCase()=="yes"){
+
 moreData.push({
 id:name,
 name:name,
 price:price
 });
+
 }
+
 });
 
 renderMore();
+
 loaded=true;
 btn.style.display="none";
+
 });
+
 }
 
 function renderMore(){
+
 let html="";
 
 moreData.forEach(i=>{
+
 let q=cart.more[i.id]?.qty||0;
 
 html+=`
+
 <div class="section">
+
 <div><b>${i.name}</b> ₹${i.price}</div>
 
 <div class="qty-box">
 <div>Quantity</div>
+
 <div>
 <button class="qty-btn" onclick="updateMore('${i.id}',-1)">-</button>
+
 <span class="item-count">${q}</span>
+
 <button class="qty-btn" onclick="updateMore('${i.id}',1)">+</button>
 </div>
+
 </div>
 
-</div>`;
+</div>
+
+`;
+
 });
 
 document.getElementById("menuBox").innerHTML=html;
+
 }
 
 function updateMore(id,val){
+
 let item=moreData.find(x=>x.id==id);
 
 if(!cart.more[id] && val>0){
-cart.more[id]={name:item.name,price:item.price,qty:1};
+
+cart.more[id]={
+name:item.name,
+price:item.price,
+qty:1
+};
+
 }
+
 else if(cart.more[id]){
+
 cart.more[id].qty+=val;
-if(cart.more[id].qty<=0) delete cart.more[id];
+
+if(cart.more[id].qty<=0)
+delete cart.more[id];
+
 }
 
 renderMore();
 updateTotal();
+
 }
 
 function confirmOrder(){
 
 let name=document.getElementById("name").value.trim();
+
 let phone=document.getElementById("phone").value.trim();
+
 let village=document.getElementById("village").value.trim();
+
 let ps=document.getElementById("ps").value.trim();
 
-if(!/^\d{10}$/.test(phone)){
-alert("Wrong Phone Number");
+/* EMPTY FIELD VALIDATION */
+if(!name || !village || !ps){
+
+alert("Please Fill All Fields");
 return;
+
 }
 
-if(!name||!village||!ps){
-alert("Fill all details");
+/* PHONE VALIDATION */
+if(!/^\d{10}$/.test(phone)){
+
+alert("Wrong Phone Number");
 return;
+
 }
 
 let items=`${cart.main.name} x${cart.main.qty}<br>`;
@@ -346,6 +407,7 @@ document.getElementById("summary").innerHTML=
 `<b>${name}</b><br><br>${items}<br><b>Total ₹${total}</b>`;
 
 document.getElementById("popup").style.display="block";
+
 }
 
 function closePopup(){
@@ -360,8 +422,11 @@ let msg=`Satyabati Hindu Hotel
 New Order
 
 ${document.getElementById("name").value}
+
 Phone - ${document.getElementById("phone").value}
+
 Village - ${document.getElementById("village").value}
+
 P.S - ${document.getElementById("ps").value}
 
 Order:
@@ -386,10 +451,16 @@ Please Pay ₹${total} and Send Payment Screenshot
 
 Thank You`;
 
-window.location.href=`whatsapp://send?phone=919836697502&text=${encodeURIComponent(msg)}`;
+window.location.href=
+`whatsapp://send?phone=919836697502&text=${encodeURIComponent(msg)}`;
 
 setTimeout(()=>{
-window.open(`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`,"_blank");
+
+window.open(
+`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`,
+"_blank"
+);
+
 },800);
 
 }
