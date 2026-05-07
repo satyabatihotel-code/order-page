@@ -80,14 +80,19 @@ input {
   align-items:center;
 }
 
-.total {font-size:20px;font-weight:bold;}
+.total {
+  font-size:20px;
+  font-weight:bold;
+}
 
+/* ✅ BIGGER PROCEED BUTTON */
 .btn {
   background:#FFC107;
   border:none;
-  padding:10px 18px;
-  border-radius:8px;
+  padding:14px 28px;
+  border-radius:10px;
   font-weight:bold;
+  font-size:16px;
   margin-right:30px;
 }
 
@@ -127,8 +132,8 @@ input {
 <div class="section">
 <input id="name" placeholder="Enter your Full Name">
 
-<!-- ✅ MOBILE KEYPAD + VALIDATION -->
-<input id="phone" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="Enter WhatsApp Number">
+<!-- ✅ CHANGED TEXT -->
+<input id="phone" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="Enter Phone Number">
 
 <input id="village" placeholder="Enter Village Name">
 <input id="ps" placeholder="Enter Police Station">
@@ -315,7 +320,6 @@ let phone=document.getElementById("phone").value.trim();
 let village=document.getElementById("village").value.trim();
 let ps=document.getElementById("ps").value.trim();
 
-/* ✅ PHONE VALIDATION */
 if(!/^\d{10}$/.test(phone)){
 alert("Wrong Phone Number");
 return;
@@ -376,13 +380,18 @@ msg+=`
 Total - ₹${total}
 
 Pay here:
-https://res.cloudinary.com/dh6npc54z/image/upload/f_auto,q_auto/WhatsApp_Image_2026-04-22_at_8.26.01_PM_moxqfr
+https://bit.ly/satyabati-paynow
 
 Please Pay ₹${total} and Send Payment Screenshot
 
 Thank You`;
 
-window.open(`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`);
+window.location.href=`whatsapp://send?phone=919836697502&text=${encodeURIComponent(msg)}`;
+
+setTimeout(()=>{
+window.open(`https://wa.me/919836697502?text=${encodeURIComponent(msg)}`,"_blank");
+},800);
+
 }
 
 updateTotal();
